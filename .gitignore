@@ -1,6 +1,7 @@
+### CLIENT ###
 client/node_modules
 client/.next
 
-
+### SERVER ###
 server/node_modules
 server/node_modules

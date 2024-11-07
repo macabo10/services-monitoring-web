@@ -28,22 +28,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" >
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en"
+    // style={{ height: "100%" }}
+    >
+      <body className={`${geistSans.variable} ${geistMono.variable}`} style={{ backgroundColor: '#131a25' }}>
         <CssBaseline />
         <ThemeProvider theme={theme}>
-          <Box sx={{ display: "flex", height: "100%" }}>
+          <Box sx={{ display: "flex", minHeight: "100%", overflowY: "auto" }}>
             <AppSideBar />
             <Container
               maxWidth={false}
-              sx={{ backgroundColor: "#ccc", height: "100%" }}>
+              sx={{ height: "100%" }}>
               {children}
             </Container>
           </Box>
 
         </ThemeProvider>
-
-
       </body>
     </html>
   );

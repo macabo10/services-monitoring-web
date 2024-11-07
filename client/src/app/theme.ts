@@ -1,5 +1,14 @@
-"use client"
-import { createTheme } from '@mui/material/styles';
+'use client'
+
+import { createTheme, TypeBackground } from '@mui/material/styles';
+
+// add new custom property to background
+declare module '@mui/material/styles' {
+    interface TypeBackground {
+        main: string;
+        card: string;
+    }
+}
 
 const theme = createTheme({
     palette: {
@@ -12,21 +21,14 @@ const theme = createTheme({
         },
         background: {
             default: '#11151C',
-            paper: '#1A1D25',
+            main: '#131a25',
+            card: '#1d2434',
         },
     },
     direction: 'rtl',
     spacing: 8,
     shape: {
         borderRadius: 4,
-    },
-    overrides: {
-        MuiAppBar: {
-            colorInherit: {
-                backgroundColor: '#689f38',
-                color: '#fff',
-            },
-        },
     },
 });
 

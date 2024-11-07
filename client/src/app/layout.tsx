@@ -3,7 +3,7 @@
 import AppSideBar from "@/components/app.sidebar";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Container, ThemeProvider } from "@mui/material";
+import { Box, Container, CssBaseline, ThemeProvider } from "@mui/material";
 import theme from "./theme";
 
 const geistSans = localFont({
@@ -28,14 +28,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en"
+    // style={{ height: "100%" }}
+    >
+      <body className={`${geistSans.variable} ${geistMono.variable}`} style={{ backgroundColor: '#131a25' }}>
+        <CssBaseline />
         <ThemeProvider theme={theme}>
-          <AppSideBar />
-          <Container
-          >
-            {children}
-          </Container>
+          <Box sx={{ display: "flex", minHeight: "100%", overflowY: "auto" }}>
+            <AppSideBar />
+            <Container
+              maxWidth={false}
+              sx={{ height: "100%" }}>
+              {children}
+            </Container>
+          </Box>
+
         </ThemeProvider>
       </body>
     </html>

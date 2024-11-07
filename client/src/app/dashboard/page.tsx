@@ -1,5 +1,6 @@
 'use client'
 
+import CardDashboard from '@/components/card.dashboard';
 import { useTheme } from '@mui/material/styles';
 
 const DashboardPage = () => {
@@ -7,9 +8,9 @@ const DashboardPage = () => {
 
     return (
         <>
-        WTf
+            <CardDashboard title="Total Users" value="100" color={theme.palette.background.card} />
         </>
-        
+
     );
 }
 

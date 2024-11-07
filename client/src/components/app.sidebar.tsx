@@ -14,7 +14,9 @@ const AppSideBar = () => {
             variant="permanent"
             anchor="left"
             sx={{
+                width: 360,
                 '& .MuiDrawer-paper': {
+
                     // width: drawerWidth,
                     boxSizing: 'border-box',
                     backgroundColor: theme.palette.background.default,

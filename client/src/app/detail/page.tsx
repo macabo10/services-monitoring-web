@@ -3,6 +3,7 @@ const DetailPage = () => {
         <>
             <h1>Detail</h1>
             <p>Welcome to the detail</p>
+            
         </>
     );
 }

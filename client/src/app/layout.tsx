@@ -1,10 +1,12 @@
 'use client'
 
-import AppSideBar from "@/components/app.sidebar";
+import AppSideBar from "@/components/AppSidebar";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Box, Container, CssBaseline, ThemeProvider } from "@mui/material";
 import theme from "./theme";
+import GoldPriceService from "./gold-price-service/page";
+import { use } from "react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -48,12 +50,13 @@ export default function RootLayout({
     <html lang="en"
     // style={{ height: "100%" }}
     >
-      <body className={`${robotoBold.variable} ${robotoThin.variable}`} style={{ backgroundColor: '#131a25' }}>
+      <body className={`${robotoBold.variable} ${robotoThin.variable}`} style={{ backgroundColor: theme.palette.background.main }}>
         <CssBaseline />
         <ThemeProvider theme={theme}>
           <Box sx={{ display: "flex", minHeight: "100%", overflowY: "auto" }}>
             <AppSideBar />
             <Container
+              disableGutters={true}
               maxWidth={false}
               sx={{ height: "100%" }}>
               {children}

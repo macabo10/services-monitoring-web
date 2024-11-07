@@ -1,10 +1,12 @@
-import Image from "next/image";
-import styles from "./page.module.css";
 
-export default function Home() {
+import Header from "../../components/Header";
+import ContainerInfo from "@/components/ContainerInfo";
+
+export default function ExchangeRateService() {
   return (
     <>
-    Container
+      <Header content={"EXCHANGE RATE SERVICE"}/>
+      <ContainerInfo containerName={"Exchange Rate Service Container 1"}/>
     </>
   );
 }

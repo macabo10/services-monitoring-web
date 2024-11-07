@@ -1,10 +1,16 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
 
-export default function Home() {
+import Header from "../../components/Header";
+
+import { useTheme } from "@mui/material/styles";
+import ContainerInfo from "../../components/ContainerInfo";
+
+export default function GoldPriceService() {
+  const theme = useTheme();
   return (
     <>
-    Container
+      <Header content={"GOLD PRICE SERVICE"}/>
+      <ContainerInfo containerName={"Gold Price Service Container 1"}/>
     </>
   );
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { createTheme, TypeBackground } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 
 // add new custom property to background
 declare module '@mui/material/styles' {
@@ -17,11 +17,11 @@ const theme = createTheme({
             main: '#3bd671',
         },
         secondary: {
-            main: '#8ABFA3',
+            main: '#ced4d7',
         },
         background: {
-            default: '#11151C',
-            main: '#131a25',
+            default: '#15222b',
+            main: '#131925',
             card: '#1d2434',
         },
     },

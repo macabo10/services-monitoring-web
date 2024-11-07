@@ -1,6 +1,6 @@
 'use client'
 
-import CardDashboard from '@/components/card.dashboard';
+import CardDashboard from '@/components/CardDashboard';
 import { useTheme } from '@mui/material/styles';
 
 const DashboardPage = () => {

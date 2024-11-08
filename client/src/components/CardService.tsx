@@ -14,7 +14,7 @@ const card = ({title, content}: {title: string, content?: React.ReactNode}) => {
     const theme = useTheme();
     return (
         <React.Fragment>
-            <CardContent>
+            <CardContent sx={{ height: '13vh' }}>
                 <Typography variant="h5" component="div" sx={{ color: theme.palette.secondary.main }}>
                     {title}
                 </Typography>
@@ -28,11 +28,13 @@ const card = ({title, content}: {title: string, content?: React.ReactNode}) => {
 }
 
 
-const CardService = ({title}: {title: string}) => {
+const CardService = ({title, children}: {title: string, children?: React.ReactNode}) => {
     const theme = useTheme();
     return (
         <Box>
-          <Card variant="outlined" sx={{backgroundColor: theme.palette.background.card}}>{card({title})}</Card>
+          <Card variant="outlined" sx={{backgroundColor: theme.palette.background.card}}>
+            {card({title, content: children})}
+        </Card>
         </Box>
     );
 }

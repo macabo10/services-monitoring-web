@@ -2,42 +2,47 @@
 
 import Header from "../../components/Header";
 
-import ContainerInfo, {MonitoringInfo} from "../../components/ContainerInfo";
+import ContainerInfo, {MonitoringInfo} from "../../components/ContainerInfo2";
 import { useEffect, useState } from "react";
 
 export default function GoldPriceService() {
 
-  const [monitoringInfo, setMonitoringInfo] = useState<MonitoringInfo>({
-    containerID: { id: 'Gold price service 1' },
-    container: { status: false },
-    api: { status: false },
-    userCapacity: { in: 0, out: 0 },
-    cpu: { usage: 0 },
-    ram: { usage: 0, used: 0, max: 0 },
-    network: { speed: 0 },
-  });
+  const [monitoringInfos, setMonitoringInfos] = useState<MonitoringInfo[]>([]);
 
   useEffect(() => {
-    async function fetchMonitoringInfo() {
+    async function fetchMonitoringInfos() {
       try {
-        const response = await fetch('/routes/monitoring-info');
+        const response = await fetch('http://localhost:3001/test-monitoring-info/gold-price-service', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
-        setMonitoringInfo(data);
+        console.log('Monitoring infos:', data);
+        setMonitoringInfos(data);
       } catch (error) {
-        console.error('Error fetching monitoring info:', error);
+        console.error('Error fetching monitoring infos:', error);
       }
     }
 
-    fetchMonitoringInfo();
-    const intervalId = setInterval(fetchMonitoringInfo, 10000);
-
+    fetchMonitoringInfos();
+    const intervalId = setInterval(fetchMonitoringInfos, 10000);
     return () => clearInterval(intervalId);
+    
   }, []);
 
   return (
     <>
       <Header content={"GOLD PRICE SERVICE"}/>
-      <ContainerInfo containerName={monitoringInfo.containerID.id} info={monitoringInfo}/>
+      {monitoringInfos.map(info => (
+      <ContainerInfo key={info.containerID.id} containerName={info.containerID.id} info={info} />
+    ))}
     </>
   );
 }

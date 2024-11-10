@@ -12,16 +12,22 @@ function ExchangeRateService() {
   useEffect(() => {
     async function fetchMonitoringInfos() {
       try {
-        const response = await fetch('/api/monitoring-info', {
+        const response = await fetch('http://localhost:3001/test-monitoring-info/exchange-rate-service', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
         });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
+        console.log('Monitoring infos:', data);
         setMonitoringInfos(data);
       } catch (error) {
-        console.error('Error fetching monitoring info:', error);
+        console.error('Error fetching monitoring infos:', error);
       }
     }
 

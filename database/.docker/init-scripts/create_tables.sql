@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS services (
 );
 
 CREATE TABLE IF NOT EXISTS containers (
-    container_id INT PRIMARY KEY auto_increment,
+    id INT PRIMARY KEY auto_increment,
     service_id INT,
     container_name VARCHAR(255),
     status VARCHAR(10),

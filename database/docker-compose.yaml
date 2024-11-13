@@ -1,0 +1,12 @@
+services:
+  db:
+    image: mysql:5.7
+    container_name: monitoring_db
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: monitoring_service
+    volumes:
+      - .docker/data/mysql:/var/lib/mysql
+      - .docker/init-scripts:/docker-entrypoint-initdb.d
+    ports:
+      - 3307:3306

@@ -5,3 +5,9 @@ client/.next
 ### SERVER ###
 server/node_modules
 server/node_modules
+
+### DATABASE ###
+database/.docker/data/mysql/*
+# database/.docker/data/mysql/auto.cnf
+# database/.docker/data/mysql/ib_buffer_pool
+# database/.docker/data/mysql/monitoring_service/db.opt

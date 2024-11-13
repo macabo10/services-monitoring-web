@@ -88,7 +88,20 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
   const theme = useTheme();
 
   const fetchContainerDetail = async (containerID: ContainerID) => {
+    // Dummy data
     await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // const response = await fetch(`/api/container/details`, {
+    //   method: 'POST',
+    //   headers: {
+    //   'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({ containerID: containerID.id }),
+    // });
+    // let data = await response.json();
+    // console.log(data);
+
+    // Dummy data
     const data = [
       { name: 'Day 1', uptime: 24 },
       { name: 'Day 2', uptime: 48 },
@@ -120,14 +133,28 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
   };
 
   const fetchApiDetail = async (containerID: ContainerID) => {
+    // Dummy data
     await new Promise(resolve => setTimeout(resolve, 1000));
-    const data = [
+
+    const response = await fetch(`/api/container/details`, {
+      method: 'POST',
+      headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ containerID: containerID.id }),
+    });
+    let data = await response.json();
+    console.log(data);
+
+    // Dummy data
+    data = [
       { name: '1h', requests: 1000 },
       { name: '2h', requests: 1200 },
       { name: '3h', requests: 800 },
       { name: '4h', requests: 1500 },
       { name: '5h', requests: 2000 },
     ];
+
     return (
       <Box>
         <Typography color={theme.palette.secondary.main} variant="h6">API Details</Typography>
@@ -152,14 +179,29 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
   };
 
   const fetchUserCapacityDetail = async (containerID: ContainerID) => {
+    // Dummy data
     await new Promise(resolve => setTimeout(resolve, 1000));
-    const data = [
+
+    const response = await fetch(`/api/container/details`, {
+      method: 'POST',
+      headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ containerID: containerID.id }),
+    });
+  
+    let data = await response.json();
+    console.log(data);
+    
+    // Dummy data
+    data = [
       { name: 'Mon', inbound: 100, outbound: 80 },
       { name: 'Tue', inbound: 120, outbound: 100 },
       { name: 'Wed', inbound: 140, outbound: 110 },
       { name: 'Thu', inbound: 130, outbound: 90 },
       { name: 'Fri', inbound: 150, outbound: 120 },
     ];
+
     return (
       <Box>
         <Typography color={theme.palette.secondary.main} variant="h6">User Capacity Details</Typography>
@@ -186,14 +228,30 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
   };
 
   const fetchCpuDetail = async (containerID: ContainerID) => {
+    // Dummy data
     await new Promise(resolve => setTimeout(resolve, 1000));
-    const data = [
-      { name: '1m', usage: 50 },
-      { name: '2m', usage: 60 },
-      { name: '3m', usage: 70 },
-      { name: '4m', usage: 55 },
-      { name: '5m', usage: 65 },
-    ];
+
+    const response = await fetch(`http://localhost:3001/dummy-detail-cpu/cpu`, {
+      method: 'POST',
+      headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ containerID: containerID.id }),
+    });
+  
+    let data = await response.json();
+    console.log("siuuu", data);
+
+    // // Dummy data
+    // data = [
+    //   { name: '1m', usage: 50 },
+    //   { name: '2m', usage: 60 },
+    //   { name: '3m', usage: 70 },
+    //   { name: '4m', usage: 55 },
+    //   { name: '5m', usage: 65 },
+    // ];
+
+
     return (
       <Box>
         <Typography color={theme.palette.secondary.main} variant="h6">CPU Details</Typography>
@@ -220,8 +278,21 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
   };
 
   const fetchRamDetail = async (containerID: ContainerID) => {
+    // Dummy data
     await new Promise(resolve => setTimeout(resolve, 1000));
-    const data = [
+
+    const response = await fetch(`/api/container/details`, {
+      method: 'POST',
+      headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ containerID: containerID.id }),
+    });
+    let data = await response.json();
+    console.log(data);
+
+    // Dummy data
+    data = [
       { name: '1m', used: 4000 },
       { name: '2m', used: 4200 },
       { name: '3m', used: 4100 },
@@ -253,8 +324,21 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
   };
 
   const fetchNetworkDetail = async (containerID: ContainerID) => {
+    // Dummy data
     await new Promise(resolve => setTimeout(resolve, 1000));
-    const data = [
+
+    const response = await fetch(`/cpu`, {
+      method: 'POST',
+      headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ containerID: containerID.id }),
+    });
+    let data = await response.json();
+    console.log(data);
+
+    // Dummy data
+    data = [
       { name: '1m', speed: 10 },
       { name: '2m', speed: 15 },
       { name: '3m', speed: 12 },

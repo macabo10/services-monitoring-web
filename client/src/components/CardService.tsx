@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardActions, Button, Typography, Collapse, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import { on } from 'events';
 
 interface CardServiceProps {
   title: string;
@@ -17,6 +18,20 @@ const CardService: React.FC<CardServiceProps> = ({ title, children, onFetchDetai
   const [expanded, setExpanded] = useState(false);
   const [detailContent, setDetailContent] = useState<React.ReactNode | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (expanded) {
+      const updateDetail = async () => {
+        const content = await onFetchDetail();
+        console.log('Detail:', content);
+        setDetailContent(content);
+        // console.log('Detail updated');
+      };
+      updateDetail();
+      const interval = setInterval(updateDetail, 5000);
+      return () => clearInterval(interval);
+    }
+  }), [detailContent];
 
   const handleExpandClick = async () => {
     if (!expanded && !detailContent) {

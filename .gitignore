@@ -4,7 +4,6 @@ client/.next
 
 ### SERVER ###
 server/node_modules
-server/node_modules
 
 ### DATABASE ###
 database/.docker/data/mysql/*

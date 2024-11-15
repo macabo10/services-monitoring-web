@@ -1,7 +1,8 @@
 'use client';
 
 import Header from "../../components/Header";
-import ContainerInfo, {MonitoringInfo} from "@/components/ContainerInfo";
+import ContainerInfo from "@/components/ContainerInfo";
+import { MonitoringInfo } from "@/components/ContainerInfo";
 
 import { useEffect, useState } from 'react';
 

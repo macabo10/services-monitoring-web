@@ -34,5 +34,4 @@ router.get('/exchange-rate-service', (req, res) => {
   res.json(monitoringInfos);
 });
 
-
 module.exports = router;

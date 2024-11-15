@@ -25,7 +25,6 @@ const CardService: React.FC<CardServiceProps> = ({ title, children, onFetchDetai
         const content = await onFetchDetail();
         console.log('Detail:', content);
         setDetailContent(content);
-        // console.log('Detail updated');
       };
       updateDetail();
       const interval = setInterval(updateDetail, 5000);

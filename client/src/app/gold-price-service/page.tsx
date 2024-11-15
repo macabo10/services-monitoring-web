@@ -1,11 +1,12 @@
-'use client'
+'use client';
 
 import Header from "../../components/Header";
+import ContainerInfo from "@/components/ContainerInfo";
+import { MonitoringInfo } from "@/components/ContainerInfo";
 
-import ContainerInfo, {MonitoringInfo} from "../../components/ContainerInfo2";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-export default function GoldPriceService() {
+function GoldPriceService() {
 
   const [monitoringInfos, setMonitoringInfos] = useState<MonitoringInfo[]>([]);
 
@@ -40,9 +41,11 @@ export default function GoldPriceService() {
   return (
     <>
       <Header content={"GOLD PRICE SERVICE"}/>
-      {monitoringInfos.map(info => (
+    {monitoringInfos.map(info => (
       <ContainerInfo key={info.containerID.id} containerName={info.containerID.id} info={info} />
     ))}
     </>
   );
 }
+
+export default GoldPriceService;

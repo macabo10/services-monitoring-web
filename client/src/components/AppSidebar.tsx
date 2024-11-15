@@ -58,7 +58,7 @@ const SidebarList = () => {
 
     return (
         <List>
-        <CustomListItem href='/dashboard' title='Dashboard'>
+        <CustomListItem href='/' title='Dashboard'>
         </CustomListItem>
         <CustomListItem href='#' title='Services' onClick={handleClick}>
         {open ? <ExpandLess sx={{ color: theme.palette.secondary.main }} /> : <ExpandMore sx={{ color: theme.palette.secondary.main }} />}
@@ -111,7 +111,6 @@ const AppSideBar = () => {
             sx={{
                 width: 360,
                 '& .MuiDrawer-paper': {
-
                     boxSizing: 'border-box',
                     backgroundColor: theme.palette.background.default,
                 },

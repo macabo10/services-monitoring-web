@@ -5,24 +5,8 @@ import { Box, Typography, Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import CardService from './CardService';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-
-type ContainerID = { id: string };
-type ContainerStatus = { status: boolean };
-type APIStatus = { status: boolean };
-type UserCapacity = { in: number; out: number };
-type CPU = { usage: number };
-type RAM = { usage: number, used: number; max: number };
-type Network = { speed: number };
-
-interface MonitoringInfo {
-  containerID: ContainerID;
-  container: ContainerStatus;
-  api: APIStatus;
-  userCapacity: UserCapacity;
-  cpu: CPU;
-  ram: RAM;
-  network: Network;
-}
+import type { ContainerID, ContainerStatus, APIStatus, UserCapacity, CPU, RAM, Network } from '@/components/MonitoringInfo';
+import MonitoringInfo from '@/components/MonitoringInfo';
 
 const ContainerStatus = ({containerStatus}: {containerStatus: ContainerStatus}) => {
   const theme = useTheme();

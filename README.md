@@ -15,7 +15,11 @@ cd database
 docker-compose up --build
 ```
 ## Client
-## Server
+```sh
+cd client
+npm run dev
+```
+## Server (PORT: 5000)
 ```sh
 cd server
 npm run dev

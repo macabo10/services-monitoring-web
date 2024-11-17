@@ -13,12 +13,12 @@ CREATE TABLE IF NOT EXISTS containers (
     container_name VARCHAR(255),
     status VARCHAR(10),
     endpoint_status VARCHAR(10),
-    cpu_percentage DECIMAL(5, 2),
-    memory_percentage DECIMAL(5, 2),
+    cpu_percentage VARCHAR(50),
+    memory_percentage VARCHAR(50),
     memory_usage VARCHAR(50),
-    network_io VARCHAR(50),
-    request_count INT,
-    timestamp TIMESTAMP NOT NULL,
+    network_io VARCHAR(50)
+    checked_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP NOT NULL,
     FOREIGN KEY (service_id) REFERENCES services(id)
 );
 

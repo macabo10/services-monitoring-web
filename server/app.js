@@ -6,8 +6,8 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var testMonitoringInfoRouter = require('./routes/test-monitoring-info');
-var dummyDetailCpuRouter = require('./routes/dummy-detail-cpu');
+var generalRouter = require('./routes/general');
+var detailRouter = require('./routes/detail');
 
 var app = express();
 
@@ -23,16 +23,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/test-monitoring-info', testMonitoringInfoRouter);
-app.use('/dummy-detail-cpu', dummyDetailCpuRouter);
+app.use('/general', generalRouter);
+app.use('/detail', detailRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

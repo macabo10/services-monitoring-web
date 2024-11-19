@@ -32,7 +32,7 @@ const UserCapacity = ({userCapacity}: {userCapacity: UserCapacity}) => {
   const theme = useTheme();
   return (
     <Typography variant="body1" color={theme.palette.secondary.main}>
-      User capacity: {userCapacity.in} in, {userCapacity.out} out
+      {/* User capacity: {userCapacity.in} in, {userCapacity.out} out */}
     </Typography>
   );
 }
@@ -53,7 +53,7 @@ const RAM = ({ram}: {ram: RAM}) => {
         RAM: {ram.usage}% usage
       </Typography>
       <Typography variant="body1" color={theme.palette.secondary.main}>
-        {ram.used} used out of {ram.max}
+        {ram.used} {ram.unit} used out of {ram.max} {ram.unit}
       </Typography>
     </>  
   );
@@ -63,7 +63,7 @@ const Network = ({network}: {network: Network}) => {
   const theme = useTheme();
   return (
     <Typography variant="body1" color={theme.palette.secondary.main}>
-      Network: {network.speed} mB/s
+      Network: {network.in} {network.unit} in, {network.out} {network.unit} out
     </Typography>
   );
 }
@@ -332,7 +332,6 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
     return (
       <Box>
         <Typography color={theme.palette.secondary.main} variant="h6">Network Details</Typography>
-        <Typography color={theme.palette.secondary.main}>Speed: {info.network.speed} mB/s</Typography>
         <Typography color={theme.palette.secondary.main}>Total received: 1.5 GB</Typography>
         <Typography color={theme.palette.secondary.main}>Total sent: 500 MB</Typography>
         <Typography color={theme.palette.secondary.main}>Active connections: 25</Typography>

@@ -5,8 +5,8 @@ type ContainerStatus = { status: boolean };
 type APIStatus = { status: boolean };
 type UserCapacity = { in: number; out: number };
 type CPU = { usage: number };
-type RAM = { usage: number, used: number; max: number };
-type Network = { speed: number };
+type RAM = { usage: number, used: number; max: number, unit: string };
+type Network = { in: number, out: number, unit: string };
 
 interface MonitoringInfo {
   containerID: ContainerID;

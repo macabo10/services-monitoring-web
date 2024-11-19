@@ -13,7 +13,7 @@ function ExchangeRateService() {
   useEffect(() => {
     async function fetchMonitoringInfos() {
       try {
-        const response = await fetch('http://localhost:3001/test-monitoring-info/exchange-rate-service', {
+        const response = await fetch('http://localhost:4001/general/1', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

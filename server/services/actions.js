@@ -72,14 +72,171 @@ async function getGeneralInfo(service_id) {
     return data;
 }
 
-// async function getDetail(container_name) {
-//     const query = `SELECT * FROM containers 
-//                     WHERE service_id = 1 
-//                     AND container_name = '` + container_name + `'
-//                     ORDER BY timestamp DESC
-//                     LIMIT 1;`;
-// }
+// Get detail of a container
+async function getDetailCPU(container_name) {
+    const query = `SELECT cpu_percentage, checked_at FROM containers 
+                    WHERE container_name = '` + container_name + `'
+                    ORDER BY checked_at DESC
+                    LIMIT 10;`;
 
+    try {
+        const cpu_data = await db.query(query);
+        console.log('CPU data retrieved from database:', cpu_data);
+
+        const results = cpu_data.map(item => ({
+            cpu_percentage: parseFloat(item.cpu_percentage),
+            checked_at: new Date(item.checked_at).toISOString().slice(11, 19)
+        }));
+
+        return results;
+    } catch (err) {
+        console.error('Error retrieving CPU data from database:', err);
+    }
+}
+
+async function getDetailMemory(container_name) {
+    const query = `SELECT memory_percentage, memory_usage, checked_at FROM containers 
+                    WHERE container_name = '` + container_name + `'
+                    ORDER BY checked_at DESC
+                    LIMIT 10;`;
+
+    try {
+        const mem_data = await db.query(query);
+        console.log('Memory data retrieved from database:', mem_data);
+
+        const results = mem_data.map(item => {
+            let memoryUsage = item.memory_usage.split(" / ");
+            let memoryUnit = getFirstMemoryUnit(item.memory_usage);
+
+            memoryUsage[0] = parseFloat(memoryUsage[0]);
+            memoryUsage[1] = parseFloat(memoryUsage[1]);
+
+            if (memoryUnit === 'MiB') {
+                memoryUsage[0] = (memoryUsage[0] / 1024).toFixed(2);
+            }
+            memoryUsage[0] = parseFloat(memoryUsage[0]);
+
+            return {
+                memory_percentage: parseFloat(item.memory_percentage),
+                memory_usage: memoryUsage[0],
+                memory_max: memoryUsage[1],
+                unit: 'GiB',
+                checked_at: new Date(item.checked_at).toISOString().slice(11, 19)
+            };
+        });
+
+        return results;
+    } catch (err) {
+        console.error('Error retrieving Memory data from database:', err);
+    }
+}
+
+async function getDetailNetwork(container_name) {
+    const query = `SELECT network_io, checked_at FROM containers 
+                    WHERE container_name = '` + container_name + `'
+                    ORDER BY checked_at DESC
+                    LIMIT 10;`;
+
+    try {
+        const network_data = await db.query(query);
+        console.log('Network data retrieved from database:', network_data);
+
+        const results = network_data.map(item => {
+            let networkIO = item.network_io.split(" / ");
+            let networkUnit = getNetworkUnit(item.network_io);
+
+            networkIO[0] = parseFloat(networkIO[0]);
+            networkIO[1] = parseFloat(networkIO[1]);
+
+            return {
+                network_in: networkIO[0],
+                network_out: networkIO[1],
+                unit: networkUnit,
+                checked_at: new Date(item.checked_at).toISOString().slice(11, 19)
+            };
+        });
+
+        return results;
+    } catch (err) {
+        console.error('Error retrieving Memory data from database:', err);
+    }
+}
+
+async function getContainerStatus(container_name) {
+    const query = `SELECT 
+            DATE(checked_at) AS day,
+            COUNT(*) AS down_count
+            FROM (
+                SELECT 
+                    checked_at,
+                    status,
+                    LAG(status) OVER (ORDER BY checked_at) AS prev_status
+                FROM 
+                    containers
+                WHERE 
+                    container_name = '` + container_name + `'
+                    AND checked_at >= NOW() - INTERVAL 10 DAY
+            ) AS subquery
+            WHERE 
+                status = 'down' AND prev_status = 'up'
+            GROUP BY 
+                DATE(checked_at)
+            ORDER BY 
+                day DESC;
+            `;
+
+    try {
+        const status_data = await db.query(query);
+        console.log('Container Status data retrieved from database:', status_data);
+
+        results = status_data.map(item => ({
+            day: item.day.toISOString().split('T')[0],
+            down_count: item.down_count
+        }));
+
+        return results;
+    } catch (err) {
+        console.error('Error retrieving Container Status data from database:', err);
+    }
+}
+
+async function getAPIStatus(container_name) {
+    const query = `SELECT 
+            DATE(checked_at) AS day,
+            COUNT(*) AS down_count
+            FROM (
+                SELECT 
+                    checked_at,
+                    endpoint_status,
+                    LAG(status) OVER (ORDER BY checked_at) AS prev_status
+                FROM 
+                    containers
+                WHERE 
+                    container_name = '` + container_name + `'
+                    AND checked_at >= NOW() - INTERVAL 10 DAY
+            ) AS subquery
+            WHERE 
+                endpoint_status = 'down' AND prev_status = 'up'
+            GROUP BY 
+                DATE(checked_at)
+            ORDER BY 
+                day DESC;
+            `;
+
+    try {
+        const status_data = await db.query(query);
+        console.log('Container Status data retrieved from database:', status_data);
+
+        results = status_data.map(item => ({
+            day: item.day.toISOString().split('T')[0],
+            down_count: item.down_count
+        }));
+
+        return results;
+    } catch (err) {
+        console.error('Error retrieving Container Status data from database:', err);
+    }
+}
 
 async function storeData(data, service_id) {
     const query = `
@@ -122,5 +279,10 @@ async function storeData(data, service_id) {
 
 module.exports = {
     getGeneralInfo,
+    getDetailCPU,
+    getDetailMemory,
+    getDetailNetwork,
+    getContainerStatus,
+    getAPIStatus,
     storeData
 }

@@ -13,7 +13,7 @@ function GoldPriceService() {
   useEffect(() => {
     async function fetchMonitoringInfos() {
       try {
-        const response = await fetch('http://localhost:3001/test-monitoring-info/gold-price-service', {
+        const response = await fetch('http://localhost:4001/general/2', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

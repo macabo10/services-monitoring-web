@@ -1,6 +1,6 @@
 services:
   db:
-    image: mysql:5.7
+    image: mysql:8.0
     container_name: monitoring_db
     environment:
       MYSQL_ROOT_PASSWORD: 1234

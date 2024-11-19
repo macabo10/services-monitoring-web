@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var actions = require('../services/actions');
+const cors = require('cors');
+router.use(cors());
 
 router.get('/cpu/:container_name', async function (req, res, next) {
     try {
@@ -28,6 +30,7 @@ router.get('/network/:container_name', async function (req, res, next) {
         next(error);
     }
 });
+
 
 router.get('/container_status/:container_name', async function (req, res, next) {
     try {

@@ -75,40 +75,29 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
     // Dummy data
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // const response = await fetch(`/api/container/details`, {
-    //   method: 'POST',
-    //   headers: {
-    //   'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({ containerID: containerID.id }),
-    // });
-    // let data = await response.json();
-    // console.log(data);
+    const response = await fetch(`http://localhost:4001/detail/container_status/${containerID.id}`, {
+      method: 'GET',
+      headers: {
+      'Content-Type': 'application/json',
+      },
+    });
+    let data = await response.json();
+    console.log(data);
 
-    // Dummy data
-    const data = [
-      { name: 'Day 1', uptime: 24 },
-      { name: 'Day 2', uptime: 48 },
-      { name: 'Day 3', uptime: 72 },
-      { name: 'Day 4', uptime: 96 },
-      { name: 'Day 5', uptime: 120 },
-    ];
     return (
       <Box>
         <Typography variant="h6" color={theme.palette.secondary.main}>Container Details</Typography>
-        <Typography color={theme.palette.secondary.main}>ID: {info.containerID.id}</Typography>
-        <Typography color={theme.palette.secondary.main}>Status: {info.container.status ? "Up" : "Down"}</Typography>
-        <Typography color={theme.palette.secondary.main}>Image: ubuntu:latest</Typography>
         <Typography color={theme.palette.secondary.main}>Created: 2023-05-15 10:30:00</Typography>
+        <Typography color={theme.palette.secondary.main}>Last down time: 2023-05-15 10:30:00</Typography>
         <Box sx={{ width: '100%', height: 400, mt: 2 }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
+              <XAxis dataKey="day" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="uptime" stroke="#8884d8" />
+              <Line type="monotone" dataKey="down_count" stroke="#8884d8" />
             </LineChart>
           </ResponsiveContainer>
         </Box>
@@ -120,41 +109,29 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
     // Dummy data
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const response = await fetch(`/api/container/details`, {
-      method: 'POST',
+    const response = await fetch(`http://localhost:4001/detail/api_status/${containerID.id}`, {
+      method: 'GET',
       headers: {
       'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ containerID: containerID.id }),
     });
     let data = await response.json();
     console.log(data);
 
-    // Dummy data
-    data = [
-      { name: '1h', requests: 1000 },
-      { name: '2h', requests: 1200 },
-      { name: '3h', requests: 800 },
-      { name: '4h', requests: 1500 },
-      { name: '5h', requests: 2000 },
-    ];
-
     return (
       <Box>
         <Typography color={theme.palette.secondary.main} variant="h6">API Details</Typography>
-        <Typography color={theme.palette.secondary.main}>Status: {info.api.status ? "Up" : "Down"}</Typography>
         <Typography color={theme.palette.secondary.main}>Endpoint: https://api.example.com</Typography>
-        <Typography color={theme.palette.secondary.main}>Version: v1.2.3</Typography>
         <Typography color={theme.palette.secondary.main}>Last checked: 2 minutes ago</Typography>
         <Box sx={{ width: '100%', height: 400, mt: 2 }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
+              <XAxis dataKey="day" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="requests" stroke="#82ca9d" />
+              <Line type="monotone" dataKey="down_count" stroke="#82ca9d" />
             </LineChart>
           </ResponsiveContainer>
         </Box>
@@ -215,26 +192,15 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
     // Dummy data
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const response = await fetch(`http://localhost:3001/dummy-detail-cpu/cpu`, {
-      method: 'POST',
+    const response = await fetch(`http://localhost:4001/detail/cpu/${containerID.id}`, {
+      method: 'GET',
       headers: {
       'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ containerID: containerID.id }),
     });
   
     let data = await response.json();
-    console.log("siuuu", data);
-
-    // // Dummy data
-    // data = [
-    //   { name: '1m', usage: 50 },
-    //   { name: '2m', usage: 60 },
-    //   { name: '3m', usage: 70 },
-    //   { name: '4m', usage: 55 },
-    //   { name: '5m', usage: 65 },
-    // ];
-
+    console.log(data);
 
     return (
       <Box>
@@ -249,11 +215,11 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
+              <XAxis dataKey="checked_at" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="usage" stroke="#8884d8" />
+              <Line type="monotone" dataKey="cpu_percentage" stroke="#8884d8" />
             </LineChart>
           </ResponsiveContainer>
         </Box>
@@ -265,24 +231,15 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
     // Dummy data
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const response = await fetch(`/api/container/details`, {
-      method: 'POST',
+    const response = await fetch(`http://localhost:4001/detail/memory/${containerID.id}`, {
+      method: 'GET',
       headers: {
       'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ containerID: containerID.id }),
     });
     let data = await response.json();
     console.log(data);
 
-    // Dummy data
-    data = [
-      { name: '1m', used: 4000 },
-      { name: '2m', used: 4200 },
-      { name: '3m', used: 4100 },
-      { name: '4m', used: 4300 },
-      { name: '5m', used: 4150 },
-    ];
     return (
       <Box>
         <Typography color={theme.palette.secondary.main} variant="h6">RAM Details</Typography>
@@ -295,11 +252,11 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
+              <XAxis dataKey="checked_at" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="used" stroke="#82ca9d" />
+              <Line type="monotone" dataKey="memory_percentage" stroke="#82ca9d" />
             </LineChart>
           </ResponsiveContainer>
         </Box>
@@ -311,24 +268,15 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
     // Dummy data
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const response = await fetch(`/cpu`, {
-      method: 'POST',
+    const response = await fetch(`http://localhost:4001/detail/network/${containerID.id}`, {
+      method: 'GET',
       headers: {
       'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ containerID: containerID.id }),
     });
     let data = await response.json();
     console.log(data);
 
-    // Dummy data
-    data = [
-      { name: '1m', speed: 10 },
-      { name: '2m', speed: 15 },
-      { name: '3m', speed: 12 },
-      { name: '4m', speed: 18 },
-      { name: '5m', speed: 14 },
-    ];
     return (
       <Box>
         <Typography color={theme.palette.secondary.main} variant="h6">Network Details</Typography>
@@ -340,11 +288,12 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
+              <XAxis dataKey="checked_at" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="speed" stroke="#8884d8" />
+              <Line type="monotone" dataKey="network_in" stroke="#8884d8" />
+              <Line type="monotone" dataKey="network_out" stroke="#8884d8" />
             </LineChart>
           </ResponsiveContainer>
         </Box>

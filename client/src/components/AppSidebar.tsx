@@ -17,6 +17,9 @@ const CustomListItem = ({ href, title, onClick, children }: { href: string; titl
                         color: theme.palette.primary.main,
                     },
                 },
+                border: '1px solid #e0e0e0',
+                borderRadius: 2,
+                margin: 2,
             }}
             onClick={onClick}
             component={Link}

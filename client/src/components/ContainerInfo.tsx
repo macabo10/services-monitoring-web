@@ -8,7 +8,7 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tool
 import type { ContainerID, ContainerStatus, APIStatus, UserCapacity, CPU, RAM, Network } from '@/components/MonitoringInfo';
 import MonitoringInfo from '@/components/MonitoringInfo';
 
-const ContainerStatus = ({containerStatus}: {containerStatus: ContainerStatus}) => {
+const ContainerStatus = ({ containerStatus }: { containerStatus: ContainerStatus }) => {
   const theme = useTheme();
   const status = containerStatus.status ? 'up' : 'down';
   return (
@@ -18,7 +18,7 @@ const ContainerStatus = ({containerStatus}: {containerStatus: ContainerStatus}) 
   );
 };
 
-const APIStatus = ({apiStatus}: {apiStatus: APIStatus}) => {
+const APIStatus = ({ apiStatus }: { apiStatus: APIStatus }) => {
   const theme = useTheme();
   const status = apiStatus.status ? 'up' : 'down';
   return (
@@ -28,7 +28,7 @@ const APIStatus = ({apiStatus}: {apiStatus: APIStatus}) => {
   );
 };
 
-const UserCapacity = ({userCapacity}: {userCapacity: UserCapacity}) => {
+const UserCapacity = ({ userCapacity }: { userCapacity: UserCapacity }) => {
   const theme = useTheme();
   return (
     <Typography variant="body1" color={theme.palette.secondary.main}>
@@ -37,7 +37,7 @@ const UserCapacity = ({userCapacity}: {userCapacity: UserCapacity}) => {
   );
 }
 
-const CPU = ({cpu}: {cpu: CPU}) => {
+const CPU = ({ cpu }: { cpu: CPU }) => {
   return (
     <Typography variant="body1" color={cpu.usage <= 80 ? 'green' : 'red'}>
       CPU: {cpu.usage}% usage
@@ -45,7 +45,7 @@ const CPU = ({cpu}: {cpu: CPU}) => {
   );
 }
 
-const RAM = ({ram}: {ram: RAM}) => {
+const RAM = ({ ram }: { ram: RAM }) => {
   const theme = useTheme();
   return (
     <>
@@ -55,11 +55,11 @@ const RAM = ({ram}: {ram: RAM}) => {
       <Typography variant="body1" color={theme.palette.secondary.main}>
         {ram.used} {ram.unit} used out of {ram.max} {ram.unit}
       </Typography>
-    </>  
+    </>
   );
 }
 
-const Network = ({network}: {network: Network}) => {
+const Network = ({ network }: { network: Network }) => {
   const theme = useTheme();
   return (
     <Typography variant="body1" color={theme.palette.secondary.main}>
@@ -68,17 +68,18 @@ const Network = ({network}: {network: Network}) => {
   );
 }
 
-const ContainerInfo = ({containerName, info}: {containerName?: string, info: MonitoringInfo}) => {
+const ContainerInfo = ({ containerName, info }: { containerName?: string, info: MonitoringInfo }) => {
   const theme = useTheme();
 
   const fetchContainerDetail = async (containerID: ContainerID) => {
-    // Dummy data
+
+    const DETAIL_CONTAINER_STATUS_URL = process.env.NEXT_PUBLIC_BACKEND_URL + '/detail/container_status/' + containerID.id;
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const response = await fetch(`http://localhost:4001/detail/container_status/${containerID.id}`, {
+    const response = await fetch(DETAIL_CONTAINER_STATUS_URL, {
       method: 'GET',
       headers: {
-      'Content-Type': 'application/json',
+        'Content-Type': 'application/json',
       },
     });
     let data = await response.json();
@@ -87,11 +88,11 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
     return (
       <Box>
         <Typography variant="h6" color={theme.palette.secondary.main}>Container Details</Typography>
-        <Typography color={theme.palette.secondary.main}>Created: 2023-05-15 10:30:00</Typography>
-        <Typography color={theme.palette.secondary.main}>Last down time: 2023-05-15 10:30:00</Typography>
+        <Typography color={theme.palette.secondary.main}>Created: {data.created_at}</Typography>
+        <Typography color={theme.palette.secondary.main}>Last down time: {data.checked_at}</Typography>
         <Box sx={{ width: '100%', height: 400, mt: 2 }}>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
+            <LineChart data={data.status_data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="day" />
               <YAxis />
@@ -112,7 +113,7 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
     const response = await fetch(`http://localhost:4001/detail/api_status/${containerID.id}`, {
       method: 'GET',
       headers: {
-      'Content-Type': 'application/json',
+        'Content-Type': 'application/json',
       },
     });
     let data = await response.json();
@@ -146,14 +147,14 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
     const response = await fetch(`/api/container/details`, {
       method: 'POST',
       headers: {
-      'Content-Type': 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ containerID: containerID.id }),
     });
-  
+
     let data = await response.json();
     console.log(data);
-    
+
     // Dummy data
     data = [
       { name: 'Mon', inbound: 100, outbound: 80 },
@@ -189,16 +190,16 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
   };
 
   const fetchCpuDetail = async (containerID: ContainerID) => {
-    // Dummy data
+    const DETAIL_CPU_STATUS_URL = process.env.NEXT_PUBLIC_BACKEND_URL + '/detail/cpu/' + containerID.id;
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const response = await fetch(`http://localhost:4001/detail/cpu/${containerID.id}`, {
+    const response = await fetch(DETAIL_CPU_STATUS_URL, {
       method: 'GET',
       headers: {
-      'Content-Type': 'application/json',
+        'Content-Type': 'application/json',
       },
     });
-  
+
     let data = await response.json();
     console.log(data);
 
@@ -228,13 +229,13 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
   };
 
   const fetchRamDetail = async (containerID: ContainerID) => {
-    // Dummy data
+    const DETAIL_RAM_STATUS_URL = process.env.NEXT_PUBLIC_BACKEND_URL + '/detail/memory/' + containerID.id;
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const response = await fetch(`http://localhost:4001/detail/memory/${containerID.id}`, {
+    const response = await fetch(DETAIL_RAM_STATUS_URL, {
       method: 'GET',
       headers: {
-      'Content-Type': 'application/json',
+        'Content-Type': 'application/json',
       },
     });
     let data = await response.json();
@@ -247,7 +248,6 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
         <Typography color={theme.palette.secondary.main}>Used: {info.ram.used}</Typography>
         <Typography color={theme.palette.secondary.main}>Max: {info.ram.max}</Typography>
         <Typography color={theme.palette.secondary.main}>Free: {info.ram.max - info.ram.used}</Typography>
-        <Typography color={theme.palette.secondary.main}>Swap used: 256 MB</Typography>
         <Box sx={{ width: '100%', height: 400, mt: 2 }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
@@ -265,13 +265,13 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
   };
 
   const fetchNetworkDetail = async (containerID: ContainerID) => {
-    // Dummy data
+    const DETAIL_NETWORK_STATUS_URL = process.env.NEXT_PUBLIC_BACKEND_URL + '/detail/network/' + containerID.id;
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const response = await fetch(`http://localhost:4001/detail/network/${containerID.id}`, {
+    const response = await fetch(DETAIL_NETWORK_STATUS_URL, {
       method: 'GET',
       headers: {
-      'Content-Type': 'application/json',
+        'Content-Type': 'application/json',
       },
     });
     let data = await response.json();
@@ -305,41 +305,41 @@ const ContainerInfo = ({containerName, info}: {containerName?: string, info: Mon
     <Box sx={{ flexGrow: 1, p: 2 }}>
       <Typography variant="h4" sx={{ mb: 2, color: theme.palette.secondary.main }}>{containerName}</Typography>
       <Grid container spacing={2} sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 2 }}>
-        <CardService 
-          title="Container" 
+        <CardService
+          title="Container"
           onFetchDetail={() => fetchContainerDetail(info.containerID)}
         >
-          {info && <ContainerStatus containerStatus={info.container}/>}
+          {info && <ContainerStatus containerStatus={info.container} />}
         </CardService>
-        <CardService 
-          title="Endpoint API" 
+        <CardService
+          title="Endpoint API"
           onFetchDetail={() => fetchApiDetail(info.containerID)}
         >
-          {info && <APIStatus apiStatus={info.api}/>}
+          {info && <APIStatus apiStatus={info.api} />}
         </CardService>
-        <CardService 
-          title="User capacity" 
+        <CardService
+          title="User capacity"
           onFetchDetail={() => fetchUserCapacityDetail(info.containerID)}
         >
-          {info && <UserCapacity userCapacity={info.userCapacity}/>}
+          {info && <UserCapacity userCapacity={info.userCapacity} />}
         </CardService>
-        <CardService 
-          title="CPU" 
+        <CardService
+          title="CPU"
           onFetchDetail={() => fetchCpuDetail(info.containerID)}
         >
-          {info && <CPU cpu={info.cpu}/>}
+          {info && <CPU cpu={info.cpu} />}
         </CardService>
-        <CardService 
-          title="RAM" 
+        <CardService
+          title="RAM"
           onFetchDetail={() => fetchRamDetail(info.containerID)}
         >
-          {info && <RAM ram={info.ram}/>}
+          {info && <RAM ram={info.ram} />}
         </CardService>
-        <CardService 
-          title="Network" 
+        <CardService
+          title="Network"
           onFetchDetail={() => fetchNetworkDetail(info.containerID)}
         >
-          {info && <Network network={info.network}/>}
+          {info && <Network network={info.network} />}
         </CardService>
       </Grid>
     </Box>

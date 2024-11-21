@@ -85,10 +85,10 @@ async function getDetailCPU(container_name) {
 
         const results = cpu_data.map(item => ({
             cpu_percentage: parseFloat(item.cpu_percentage),
-            checked_at: new Date(item.checked_at).toISOString().slice(11, 19)
+            checked_at: new Date(new Date(item.checked_at).getTime() + 7 * 60 * 60 * 1000).toISOString().slice(11, 19)
         }));
 
-        return results;
+        return results.reverse();
     } catch (err) {
         console.error('Error retrieving CPU data from database:', err);
     }
@@ -121,11 +121,12 @@ async function getDetailMemory(container_name) {
                 memory_usage: memoryUsage[0],
                 memory_max: memoryUsage[1],
                 unit: 'GiB',
-                checked_at: new Date(item.checked_at).toISOString().slice(11, 19)
+                checked_at: new Date(new Date(item.checked_at).getTime() + 7 * 60 * 60 * 1000).toISOString().slice(11, 19)
+
             };
         });
 
-        return results;
+        return results.reverse();
     } catch (err) {
         console.error('Error retrieving Memory data from database:', err);
     }
@@ -152,18 +153,18 @@ async function getDetailNetwork(container_name) {
                 network_in: networkIO[0],
                 network_out: networkIO[1],
                 unit: networkUnit,
-                checked_at: new Date(item.checked_at).toISOString().slice(11, 19)
+                checked_at: new Date(new Date(item.checked_at).getTime() + 7 * 60 * 60 * 1000).toISOString().slice(11, 19).replace('T', ' '),
             };
         });
 
-        return results;
+        return results.reverse();
     } catch (err) {
         console.error('Error retrieving Memory data from database:', err);
     }
 }
 
 async function getContainerStatus(container_name) {
-    const query = `SELECT 
+    const query_1 = `SELECT 
             DATE(checked_at) AS day,
             COUNT(*) AS down_count
             FROM (
@@ -184,15 +185,38 @@ async function getContainerStatus(container_name) {
             ORDER BY 
                 day DESC;
             `;
+    const query_for_down = `SELECT checked_at
+                FROM containers
+                WHERE container_name = '` + container_name + `'
+                AND status = 'down'
+                ORDER BY checked_at DESC
+                LIMIT 1;`;
+    const query_for_created_at = `SELECT created_at
+                FROM containers
+                WHERE container_name = '` + container_name + `'
+                ORDER BY created_at DESC
+                LIMIT 1;`;
 
     try {
-        const status_data = await db.query(query);
+        const status_data = await db.query(query_1);
         console.log('Container Status data retrieved from database:', status_data);
 
-        results = status_data.map(item => ({
-            day: item.day.toISOString().split('T')[0],
+        const down_status = await db.query(query_for_down);
+        console.log('Down Status data retrieved from database:', down_status);
+
+        const created_at = await db.query(query_for_created_at);
+        console.log('Created At data retrieved from database:', created_at);
+
+        status_through_time = status_data.map(item => ({
+            day: new Date(new Date(item.day).getTime() + 7 * 60 * 60 * 1000).toISOString().split('T')[0],
             down_count: item.down_count
         }));
+
+        results = {
+            status_data: status_through_time.reverse(),
+            created_at: new Date(new Date(created_at[0].created_at).getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' '), // Convert to GMT+7
+            checked_at: down_status.length > 0 ? new Date(new Date(down_status[0].checked_at).getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ') : ''
+        };
 
         return results;
     } catch (err) {

@@ -33,7 +33,7 @@ function GoldPriceService() {
     }
 
     fetchMonitoringInfos();
-    const intervalId = setInterval(fetchMonitoringInfos, 10000);
+    const intervalId = setInterval(fetchMonitoringInfos, 5000);
     return () => clearInterval(intervalId);
     
   }, []);
@@ -42,7 +42,7 @@ function GoldPriceService() {
     <>
       <Header content={"GOLD PRICE SERVICE"}/>
     {monitoringInfos.map(info => (
-      <ContainerInfo key={info.containerID.id} containerName={info.containerID.id} info={info} />
+      <ContainerInfo key={info.containerID.id} containerName={info.containerID.id} info={info} haveAPI={false} />
     ))}
     </>
   );

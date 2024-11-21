@@ -13,7 +13,7 @@ function ExchangeRateService() {
   useEffect(() => {
     async function fetchMonitoringInfos() {
       try {
-        const response = await fetch('http://localhost:4001/general/1', {
+        const response = await fetch('http://localhost:4001/general/3', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -40,9 +40,9 @@ function ExchangeRateService() {
 
   return (
     <>
-      <Header content={"EXCHANGE RATE SERVICE"}/>
+      <Header content={"MESSAGE QUEUE SERVICE"}/>
     {monitoringInfos.map(info => (
-      <ContainerInfo key={info.containerID.id} containerName={info.containerID.id} info={info} haveAPI={false}/>
+      <ContainerInfo key={info.containerID.id} containerName={info.containerID.id} info={info} haveAPI={true} />
     ))}
     </>
   );

@@ -78,6 +78,19 @@ const SidebarList = () => {
                         },
                     },
                 }}
+                href='/message-queue-service'
+            >
+                <ListItemText primary="Message queue service" />
+            </ListItemButton>
+            <ListItemButton
+                sx={{
+                    ...CollapseItemStyle,
+                    '&:hover': {
+                        '& .MuiListItemText-primary': {
+                            color: theme.palette.primary.main,
+                        },
+                    },
+                }}
                 href='/exchange-rate-service'
             >
                 <ListItemText primary="Exchange rate service" />

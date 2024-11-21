@@ -2,8 +2,8 @@ const axios = require('axios');
 const actions = require('../services/actions');
 
 const sideCarInfo = [
-    { url: `http://127.0.0.1:4006`, service_id: 1 },
-    { url: `http://127.0.0.1:4007`, service_id: 2 }
+    { url: process.env.SIDECAR_EXCHANGE_RATE_API, service_id: 1 },
+    { url: process.env.SIDECAR_GOLD_PRICE_API, service_id: 2 }
 ];
 
 const fetchDataFromSidecar = async (sidecar) => {
@@ -21,4 +21,11 @@ const fetchAllSidecars = () => {
     sideCarInfo.forEach(fetchDataFromSidecar);
 };
 
-setInterval(fetchAllSidecars, 5000);
+
+const storeAfterFetching = async () => {
+    setInterval(fetchAllSidecars, 5000);
+}
+
+module.exports = {
+    storeAfterFetching
+}

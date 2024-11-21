@@ -19,7 +19,7 @@ docker-compose up --build
 cd client
 npm run dev
 ```
-## Server (PORT: 5000)
+## Server
 ```sh
 cd server
 npm run dev

@@ -7,13 +7,13 @@ import { MonitoringInfo } from "@/components/ContainerInfo";
 import { useEffect, useState } from 'react';
 
 function ExchangeRateService() {
-
+  const GENERAL_API = process.env.NEXT_PUBLIC_BACKEND_URL + '/general/1';
   const [monitoringInfos, setMonitoringInfos] = useState<MonitoringInfo[]>([]);
 
   useEffect(() => {
     async function fetchMonitoringInfos() {
       try {
-        const response = await fetch('http://localhost:4001/general/1', {
+        const response = await fetch(GENERAL_API, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -35,15 +35,15 @@ function ExchangeRateService() {
     fetchMonitoringInfos();
     const intervalId = setInterval(fetchMonitoringInfos, 10000);
     return () => clearInterval(intervalId);
-    
+
   }, []);
 
   return (
     <>
-      <Header content={"EXCHANGE RATE SERVICE"}/>
-    {monitoringInfos.map(info => (
-      <ContainerInfo key={info.containerID.id} containerName={info.containerID.id} info={info} />
-    ))}
+      <Header content={"EXCHANGE RATE SERVICE"} />
+      {monitoringInfos.map(info => (
+        <ContainerInfo key={info.containerID.id} containerName={info.containerID.id} info={info} />
+      ))}
     </>
   );
 }

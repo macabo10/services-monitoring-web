@@ -7,13 +7,13 @@ import { MonitoringInfo } from "@/components/ContainerInfo";
 import { useEffect, useState } from 'react';
 
 function GoldPriceService() {
-
+  const GENERAL_API = process.env.NEXT_PUBLIC_BACKEND_URL + '/general/2';
   const [monitoringInfos, setMonitoringInfos] = useState<MonitoringInfo[]>([]);
 
   useEffect(() => {
     async function fetchMonitoringInfos() {
       try {
-        const response = await fetch('http://localhost:4001/general/2', {
+        const response = await fetch(GENERAL_API, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

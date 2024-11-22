@@ -6,14 +6,14 @@ import { MonitoringInfo } from "@/components/ContainerInfo";
 
 import { useEffect, useState } from 'react';
 
-function GoldPriceService() {
-  const GENERAL_API = process.env.NEXT_PUBLIC_BACKEND_URL + '/general/2';
+function ExchangeRateService() {
+
   const [monitoringInfos, setMonitoringInfos] = useState<MonitoringInfo[]>([]);
 
   useEffect(() => {
     async function fetchMonitoringInfos() {
       try {
-        const response = await fetch(GENERAL_API, {
+        const response = await fetch('http://localhost:4001/general/3', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -40,12 +40,12 @@ function GoldPriceService() {
 
   return (
     <>
-      <Header content={"GOLD PRICE SERVICE"}/>
+      <Header content={"MESSAGE QUEUE SERVICE"}/>
     {monitoringInfos.map(info => (
-      <ContainerInfo key={info.containerID.id} containerName={info.containerID.id} info={info} haveAPI={false} />
+      <ContainerInfo key={info.containerID.id} containerName={info.containerID.id} info={info} haveAPI={true} />
     ))}
     </>
   );
 }
 
-export default GoldPriceService;
+export default ExchangeRateService;

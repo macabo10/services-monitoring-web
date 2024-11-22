@@ -33,17 +33,17 @@ function ExchangeRateService() {
     }
 
     fetchMonitoringInfos();
-    const intervalId = setInterval(fetchMonitoringInfos, 10000);
+    const intervalId = setInterval(fetchMonitoringInfos, 5000);
     return () => clearInterval(intervalId);
 
   }, []);
 
   return (
     <>
-      <Header content={"EXCHANGE RATE SERVICE"} />
-      {monitoringInfos.map(info => (
-        <ContainerInfo key={info.containerID.id} containerName={info.containerID.id} info={info} />
-      ))}
+      <Header content={"EXCHANGE RATE SERVICE"}/>
+    {monitoringInfos.map(info => (
+      <ContainerInfo key={info.containerID.id} containerName={info.containerID.id} info={info} haveAPI={false}/>
+    ))}
     </>
   );
 }

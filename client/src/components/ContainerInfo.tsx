@@ -68,7 +68,7 @@ const Network = ({ network }: { network: Network }) => {
   );
 }
 
-const ContainerInfo = ({ containerName, info }: { containerName?: string, info: MonitoringInfo }) => {
+const ContainerInfo = ({containerName, info, haveAPI}: {containerName?: string, info: MonitoringInfo, haveAPI?: boolean}) => {
   const theme = useTheme();
 
   const fetchContainerDetail = async (containerID: ContainerID) => {
@@ -309,14 +309,16 @@ const ContainerInfo = ({ containerName, info }: { containerName?: string, info: 
         >
           {info && <ContainerStatus containerStatus={info.container} />}
         </CardService>
-        <CardService
-          title="Endpoint API"
-          onFetchDetail={() => fetchApiDetail(info.containerID)}
-        >
-          {info && <APIStatus apiStatus={info.api} />}
-        </CardService>
-        <CardService
-          title="User capacity"
+        {haveAPI && (
+          <CardService 
+            title="Endpoint API" 
+            onFetchDetail={() => fetchApiDetail(info.containerID)}
+          >
+            {info && <APIStatus apiStatus={info.api}/>}
+          </CardService>
+        )}
+        <CardService 
+          title="User capacity" 
           onFetchDetail={() => fetchUserCapacityDetail(info.containerID)}
         >
           {info && <UserCapacity userCapacity={info.userCapacity} />}

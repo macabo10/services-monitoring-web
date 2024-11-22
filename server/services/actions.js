@@ -373,15 +373,29 @@ async function getAPIStatus(container_name) {
             ORDER BY 
                 day DESC;
             `;
+    const query_for_down = `SELECT checked_at
+            FROM containers
+            WHERE container_name = '` + container_name + `'
+            AND endpoint_status = 'down'
+            ORDER BY checked_at DESC
+            LIMIT 1;`;
 
     try {
         const status_data = await db.query(query);
-        console.log('Container Status data retrieved from database:', status_data);
+        console.log('API Status data retrieved from database:', status_data);
 
-        results = status_data.map(item => ({
-            day: item.day.toISOString().split('T')[0],
+        const down_status = await db.query(query_for_down);
+        console.log('Down Status data retrieved from database:', down_status);
+
+        status_through_time = status_data.map(item => ({
+            day: new Date(new Date(item.day).getTime() + 7 * 60 * 60 * 1000).toISOString().split('T')[0],
             down_count: item.down_count
         }));
+
+        results = {
+            status_data: status_through_time.reverse(),
+            checked_at: down_status.length > 0 ? new Date(new Date(down_status[0].checked_at).getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ') : ''
+        };
 
         return results;
     } catch (err) {

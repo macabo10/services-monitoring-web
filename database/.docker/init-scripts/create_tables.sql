@@ -24,3 +24,4 @@ CREATE TABLE IF NOT EXISTS containers (
 
 INSERT INTO services (service_name) VALUES ('exchange_rate');
 INSERT INTO services (service_name) VALUES ('gold_price');
+INSERT INTO services (service_name) VALUES ('message_queue');

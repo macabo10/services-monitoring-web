@@ -107,10 +107,10 @@ const ContainerInfo = ({containerName, info, haveAPI}: {containerName?: string, 
   };
 
   const fetchApiDetail = async (containerID: ContainerID) => {
-    // Dummy data
+    const DETAIL_API_STATUS_URL = process.env.NEXT_PUBLIC_BACKEND_URL + '/detail/api_status/' + containerID.id;
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const response = await fetch(`http://localhost:4001/detail/api_status/${containerID.id}`, {
+    const response = await fetch(DETAIL_API_STATUS_URL, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -122,11 +122,10 @@ const ContainerInfo = ({containerName, info, haveAPI}: {containerName?: string, 
     return (
       <Box>
         <Typography color={theme.palette.secondary.main} variant="h6">API Details</Typography>
-        <Typography color={theme.palette.secondary.main}>Endpoint: https://api.example.com</Typography>
-        <Typography color={theme.palette.secondary.main}>Last checked: 2 minutes ago</Typography>
+        <Typography color={theme.palette.secondary.main}>Last down time: {data.checked_at}</Typography>
         <Box sx={{ width: '100%', height: 400, mt: 2 }}>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
+            <LineChart data={data.status_data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="day" />
               <YAxis />

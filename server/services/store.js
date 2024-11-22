@@ -3,7 +3,8 @@ const actions = require('../services/actions');
 
 const sideCarInfo = [
     { url: process.env.SIDECAR_EXCHANGE_RATE_API, service_id: 1 },
-    { url: process.env.SIDECAR_GOLD_PRICE_API, service_id: 2 }
+    { url: process.env.SIDECAR_GOLD_PRICE_API, service_id: 2 },
+    { url: process.env.SIDECAR_MESSAGE_QUEUE, service_id: 3 }
 ];
 
 const fetchDataFromSidecar = async (sidecar) => {

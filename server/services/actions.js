@@ -79,16 +79,54 @@ async function getDetailCPU(container_name) {
                     ORDER BY checked_at DESC
                     LIMIT 10;`;
 
+    const query_2 = `SELECT 
+                        checked_at, cpu_percentage
+                    FROM 
+                        containers
+                    WHERE 
+                        cpu_percentage = (
+                            SELECT MAX(CAST(SUBSTRING_INDEX(cpu_percentage, '%', 1) AS DECIMAL(5,2)))
+                            FROM containers
+                            WHERE container_name = '` + container_name + `'
+                            AND checked_at >= CURDATE() - INTERVAL 5 DAY
+                        )
+                    ORDER BY 
+                        cpu_percentage DESC
+                    LIMIT 1;`;
+
+    const query_3 = `SELECT 
+                        AVG(CAST(SUBSTRING_INDEX(cpu_percentage, '%', 1) AS DECIMAL(5,2))) AS avg_cpu_percentage
+                    FROM containers
+                    WHERE container_name = '` + container_name + `' 
+                    AND checked_at >= CURDATE() - INTERVAL 1 DAY;`;
+
     try {
         const cpu_data = await db.query(query);
         console.log('CPU data retrieved from database:', cpu_data);
+
+        const max_cpu = await db.query(query_2);
+        console.log('Max CPU data in the last 5 days retrieved from database:', max_cpu);
+
+        const avg_cpu = await db.query(query_3);
+        console.log('Average CPU data retrieved from database:', avg_cpu);
 
         const results = cpu_data.map(item => ({
             cpu_percentage: parseFloat(item.cpu_percentage),
             checked_at: new Date(new Date(item.checked_at).getTime() + 7 * 60 * 60 * 1000).toISOString().slice(11, 19)
         }));
 
-        return results.reverse();
+        const max_cpu_data = max_cpu.length > 0 && max_cpu[0].cpu_percentage ? {
+            cpu_percentage: parseFloat(max_cpu[0].cpu_percentage.replace('%', '')),
+            checked_at: new Date(new Date(max_cpu[0].checked_at).getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ')
+        } : 0;
+
+        const avg_cpu_data = avg_cpu.length > 0 && avg_cpu[0].avg_cpu_percentage ? parseFloat(avg_cpu[0].avg_cpu_percentage) : 0;
+
+        return {
+            cpu_data: results.reverse(),
+            max_cpu: max_cpu_data,
+            avg_cpu: avg_cpu_data
+        };
     } catch (err) {
         console.error('Error retrieving CPU data from database:', err);
     }
@@ -100,9 +138,35 @@ async function getDetailMemory(container_name) {
                     ORDER BY checked_at DESC
                     LIMIT 10;`;
 
+    const query_1 = `SELECT 
+                        checked_at, 
+                        memory_usage,
+                        CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(memory_usage, 'MiB', 1), ' ', -1) AS DECIMAL(10,2)) AS used_memory_mb
+                    FROM 
+                        containers
+                    WHERE 
+                        container_name = '` + container_name + `'
+                        AND checked_at >= CURDATE() - INTERVAL 5 DAY
+                    ORDER BY 
+                        used_memory_mb DESC
+                    LIMIT 1;
+                        `;
+
+    const query_3 = `SELECT 
+                    AVG(CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(memory_usage, 'MiB', 1), ' ', -1) AS DECIMAL(5,2))) AS avg_memory_usage
+                    FROM containers
+                    WHERE container_name = '` + container_name + `'
+                    AND checked_at >= CURDATE() - INTERVAL 1 DAY;`;
+
     try {
         const mem_data = await db.query(query);
         console.log('Memory data retrieved from database:', mem_data);
+
+        const max_mem = await db.query(query_1);
+        console.log('Max Memory data in the last 5 days retrieved from database:', max_mem);
+
+        const avg_mem = await db.query(query_3);
+        console.log('Average Memory data in day retrieved from database:', avg_mem);
 
         const results = mem_data.map(item => {
             let memoryUsage = item.memory_usage.split(" / ");
@@ -126,7 +190,29 @@ async function getDetailMemory(container_name) {
             };
         });
 
-        return results.reverse();
+        const max_memory_data = max_mem.length > 0
+            ? {
+                memory_usage: parseFloat(max_mem[0].used_memory_mb) / 1024,
+                checked_at: new Date(new Date(max_mem[0].checked_at).getTime() + 7 * 60 * 60 * 1000)
+                    .toISOString()
+                    .replace('T', ' ')
+                    .slice(0, 19),
+                unit: 'GiB',
+            }
+            : 0;
+
+        const avg_memory_data = avg_mem.length > 0 && avg_mem[0].avg_memory_usage
+            ? {
+                memory_usage: parseFloat(avg_mem[0].avg_memory_usage) / 1024,
+                unit: 'GiB',
+            }
+            : null;
+
+        return {
+            memory_data: results.reverse(),
+            max_memory: max_memory_data,
+            avg_memory: avg_memory_data,
+        };
     } catch (err) {
         console.error('Error retrieving Memory data from database:', err);
     }
@@ -138,9 +224,37 @@ async function getDetailNetwork(container_name) {
                     ORDER BY checked_at DESC
                     LIMIT 10;`;
 
+    const query_2 = `SELECT 
+                    SUM(CAST(SUBSTRING_INDEX(network_io, '/', 1) AS DECIMAL(10,2)) * 
+                        CASE
+                            WHEN SUBSTRING_INDEX(SUBSTRING_INDEX(network_io, '/', 1), ' ', -1) LIKE '%kB' THEN 1
+                            WHEN SUBSTRING_INDEX(SUBSTRING_INDEX(network_io, '/', 1), ' ', -1) LIKE '%MB' THEN 1024
+                            WHEN SUBSTRING_INDEX(SUBSTRING_INDEX(network_io, '/', 1), ' ', -1) LIKE '%GB' THEN 1024 * 1024
+                            ELSE 1
+                        END
+                    ) AS total_received,
+
+                    SUM(CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(network_io, '/', -1), ' ', -1) AS DECIMAL(10,2)) * 
+                        CASE
+                            WHEN SUBSTRING_INDEX(SUBSTRING_INDEX(network_io, '/', -1), ' ', -1) LIKE '%kB' THEN 1
+                            WHEN SUBSTRING_INDEX(SUBSTRING_INDEX(network_io, '/', -1), ' ', -1) LIKE '%MB' THEN 1024
+                            WHEN SUBSTRING_INDEX(SUBSTRING_INDEX(network_io, '/', -1), ' ', -1) LIKE '%GB' THEN 1024 * 1024
+                            ELSE 1
+                        END
+                    ) AS total_sent
+                FROM 
+                    containers
+                WHERE 
+                    container_name = '` + container_name + `'
+                    AND checked_at >= CURDATE() - INTERVAL 1 DAY
+                    `;
+
     try {
         const network_data = await db.query(query);
         console.log('Network data retrieved from database:', network_data);
+
+        const daily_io = await db.query(query_2);
+        console.log('Daily Network data retrieved from database:', daily_io);
 
         const results = network_data.map(item => {
             let networkIO = item.network_io.split(" / ");
@@ -156,8 +270,21 @@ async function getDetailNetwork(container_name) {
                 checked_at: new Date(new Date(item.checked_at).getTime() + 7 * 60 * 60 * 1000).toISOString().slice(11, 19).replace('T', ' '),
             };
         });
+        const daily_result = daily_io.length > 0
+            ? {
+                total_received: parseFloat(daily_io[0].total_received),
+                total_sent: parseFloat(daily_io[0].total_sent),
+                unit: 'kB',
+            }
+            : {
+                total_received: 0,
+                total_sent: 0,
+            }
 
-        return results.reverse();
+        return {
+            network_data: results.reverse(),
+            daily_io: daily_result,
+        };
     } catch (err) {
         console.error('Error retrieving Memory data from database:', err);
     }

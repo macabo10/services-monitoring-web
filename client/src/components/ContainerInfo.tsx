@@ -207,14 +207,12 @@ const ContainerInfo = ({ containerName, info }: { containerName?: string, info: 
       <Box>
         <Typography color={theme.palette.secondary.main} variant="h6">CPU Details</Typography>
         <Typography color={theme.palette.secondary.main}>Usage: {info.cpu.usage}%</Typography>
-        <Typography color={theme.palette.secondary.main}>Cores: 4</Typography>
-        <Typography color={theme.palette.secondary.main}>Clock speed: 2.5 GHz</Typography>
-        <Typography color={theme.palette.secondary.main}>Average load (1m): 0.75</Typography>
-        <Typography color={theme.palette.secondary.main}>Average load (5m): 0.60</Typography>
-        <Typography color={theme.palette.secondary.main}>Average load (15m): 0.50</Typography>
+        <Typography color={theme.palette.secondary.main}>Highest CPU Usage In The Last 5 Days: {data.max_cpu.cpu_percentage + '%'} at {data.max_cpu.checked_at}</Typography>
+        <Typography color={theme.palette.secondary.main}>Average CPU Usage Today: {data.avg_cpu + '%'}</Typography>
+
         <Box sx={{ width: '100%', height: 400, mt: 2 }}>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
+            <LineChart data={data.cpu_data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="checked_at" />
               <YAxis />
@@ -248,9 +246,11 @@ const ContainerInfo = ({ containerName, info }: { containerName?: string, info: 
         <Typography color={theme.palette.secondary.main}>Used: {info.ram.used}</Typography>
         <Typography color={theme.palette.secondary.main}>Max: {info.ram.max}</Typography>
         <Typography color={theme.palette.secondary.main}>Free: {info.ram.max - info.ram.used}</Typography>
+        <Typography color={theme.palette.secondary.main}>Highest RAM Usage In The Last 5 Days: {data.max_memory.memory_usage  + data.max_memory.unit} at {data.max_memory.checked_at}</Typography>
+        <Typography color={theme.palette.secondary.main}>Average CPU Usage Today: {data.avg_memory.memory_usage +  data.avg_memory.unit}</Typography>
         <Box sx={{ width: '100%', height: 400, mt: 2 }}>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
+            <LineChart data={data.memory_data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="checked_at" />
               <YAxis />
@@ -280,13 +280,11 @@ const ContainerInfo = ({ containerName, info }: { containerName?: string, info: 
     return (
       <Box>
         <Typography color={theme.palette.secondary.main} variant="h6">Network Details</Typography>
-        <Typography color={theme.palette.secondary.main}>Total received: 1.5 GB</Typography>
-        <Typography color={theme.palette.secondary.main}>Total sent: 500 MB</Typography>
-        <Typography color={theme.palette.secondary.main}>Active connections: 25</Typography>
-        <Typography color={theme.palette.secondary.main}>IP: 192.168.1.100</Typography>
+        <Typography color={theme.palette.secondary.main}>Total received in the last day: {data.daily_io.total_received + data.daily_io.unit}</Typography>
+        <Typography color={theme.palette.secondary.main}>Total sent in the last day: {data.daily_io.total_sent + data.daily_io.unit}</Typography>
         <Box sx={{ width: '100%', height: 400, mt: 2 }}>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
+            <LineChart data={data.network_data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="checked_at" />
               <YAxis />

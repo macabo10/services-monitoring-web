@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import DashboardCard from './DashboardCard'; 
+import DashboardCard from './DashboardCard';
 import { useEffect, useState } from 'react';
 import { MonitoringInfo } from "@/components/ContainerInfo";
 
@@ -17,15 +17,15 @@ const testData = [
         metrics: [
           { title: 'Container Status', value: 'running' },
           { title: 'Endpoint Status', value: 'running' },
-          { title: 'API', value: 'localhost:3008'},
+          { title: 'API', value: 'localhost:3008' },
         ],
       },
       {
         title: 'Container no. 2',
         metrics: [
-            { title: 'Container Status', value: 'running' },
-            { title: 'Endpoint Status', value: 'running' },
-            { title: 'API', value: 'localhost:3009'},
+          { title: 'Container Status', value: 'running' },
+          { title: 'Endpoint Status', value: 'running' },
+          { title: 'API', value: 'localhost:3009' },
         ],
       },
     ],
@@ -39,15 +39,15 @@ const testData = [
         metrics: [
           { title: 'Container Status', value: 'running' },
           { title: 'Endpoint Status', value: 'running' },
-          { title: 'API', value: 'localhost:3004'},
+          { title: 'API', value: 'localhost:3004' },
         ],
       },
       {
         title: 'Container no. 2',
         metrics: [
-            { title: 'Container Status', value: 'running' },
-            { title: 'Endpoint Status', value: 'running' },
-            { title: 'API', value: 'localhost:3005'},
+          { title: 'Container Status', value: 'running' },
+          { title: 'Endpoint Status', value: 'running' },
+          { title: 'API', value: 'localhost:3005' },
         ],
       },
     ],
@@ -61,7 +61,7 @@ const testData = [
         metrics: [
           { title: 'Container Status', value: 'running' },
           { title: 'Endpoint Status', value: 'running' },
-          { title: 'API', value: 'localhost:5001'},
+          { title: 'API', value: 'localhost:5001' },
         ],
       },
     ],
@@ -70,6 +70,10 @@ const testData = [
 ];
 
 export default function DashboardGrid() {
+  const GENERAL_MESSAGE_QUEUE_API = process.env.NEXT_PUBLIC_BACKEND_URL + '/general/3';
+  const GENERAL_GOLD_PRICE_API = process.env.NEXT_PUBLIC_BACKEND_URL + '/general/2';
+  const GENERAL_EXCHANGE_RATE_API = process.env.NEXT_PUBLIC_BACKEND_URL + '/general/1';
+
   const [messageQueueInfos, setMessageQueueInfos] = useState<MonitoringInfo[]>([]);
   const [exchangeRateInfos, setExchangeRateInfos] = useState<MonitoringInfo[]>([]);
   const [goldPriceInfos, setGoldPriceInfos] = useState<MonitoringInfo[]>([]);
@@ -96,15 +100,15 @@ export default function DashboardGrid() {
     }
 
     async function fetchDashboardMonitoringInfos() {
-      setMessageQueueInfos(await fetchServiceMonitoringInfos('http://localhost:4001/general/3'));
-      setExchangeRateInfos(await fetchServiceMonitoringInfos('http://localhost:4001/general/1'));
-      setGoldPriceInfos(await fetchServiceMonitoringInfos('http://localhost:4001/general/2'));
+      setMessageQueueInfos(await fetchServiceMonitoringInfos(GENERAL_MESSAGE_QUEUE_API));
+      setExchangeRateInfos(await fetchServiceMonitoringInfos(GENERAL_EXCHANGE_RATE_API));
+      setGoldPriceInfos(await fetchServiceMonitoringInfos(GENERAL_GOLD_PRICE_API));
     }
 
     fetchDashboardMonitoringInfos();
     const intervalId = setInterval(fetchDashboardMonitoringInfos, 5000);
     return () => clearInterval(intervalId);
-    
+
   }, []);
 
   return (
@@ -117,13 +121,13 @@ export default function DashboardGrid() {
         ))} */}
 
         <Grid item>
-          <DashboardCard siteName="MESSAGE QUEUE" containers={messageQueueInfos} path="message-queue-service"/>
+          <DashboardCard siteName="MESSAGE QUEUE" containers={messageQueueInfos} path="message-queue-service" />
         </Grid>
         <Grid item>
-          <DashboardCard siteName="EXCHANGE RATE SERVICE" containers={exchangeRateInfos} path="exchange-rate-service"/>
+          <DashboardCard siteName="EXCHANGE RATE SERVICE" containers={exchangeRateInfos} path="exchange-rate-service" />
         </Grid>
         <Grid item>
-          <DashboardCard siteName="GOLD PRICE SERVICE" containers={goldPriceInfos} path="gold-price-service"/>
+          <DashboardCard siteName="GOLD PRICE SERVICE" containers={goldPriceInfos} path="gold-price-service" />
         </Grid>
       </Grid>
     </Box>

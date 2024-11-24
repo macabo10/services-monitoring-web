@@ -69,6 +69,7 @@ async function getGeneralInfo(service_id) {
                 in: exchange_data[0].request_count,
                 out: exchange_data[0].response_count
             },
+
         });
         // data.push({ service_name: service.container_name, data: exchange_data });
     }
@@ -356,49 +357,60 @@ async function getContainerStatus(container_name) {
 }
 
 async function getAPIStatus(container_name) {
-    const query = `SELECT 
-            DATE(checked_at) AS day,
-            COUNT(*) AS down_count
-            FROM (
-                SELECT 
-                    checked_at,
-                    endpoint_status,
-                    LAG(status) OVER (ORDER BY checked_at) AS prev_status
-                FROM 
-                    containers
-                WHERE 
-                    container_name = '` + container_name + `'
-                    AND checked_at >= NOW() - INTERVAL 10 DAY
-            ) AS subquery
-            WHERE 
-                endpoint_status = 'down' AND prev_status = 'up'
-            GROUP BY 
-                DATE(checked_at)
-            ORDER BY 
-                day DESC;
-            `;
-    const query_for_down = `SELECT checked_at
+    const query_for_gold_down = `SELECT checked_at
             FROM containers
             WHERE container_name = '` + container_name + `'
-            AND endpoint_status = 'down'
+            AND gold_status = 'down'
             ORDER BY checked_at DESC
             LIMIT 1;`;
 
+    const query_for_exchange_down = `SELECT checked_at
+            FROM containers
+            WHERE container_name = '` + container_name + `'
+            AND exchange_status = 'down'
+            ORDER BY checked_at DESC
+            LIMIT 1;`;
+
+    const query = `SELECT
+            DATE(checked_at) AS day,
+            SUM(CASE WHEN gold_status = 'down' AND prev_gold_status = 'up' THEN 1 ELSE 0 END) AS gold_down_count,
+            SUM(CASE WHEN exchange_status = 'down' AND prev_exchange_status = 'up' THEN 1 ELSE 0 END) AS exchange_down_count
+        FROM (
+            SELECT
+                checked_at,
+                gold_status,
+                LAG(gold_status) OVER (ORDER BY checked_at) AS prev_gold_status,
+                exchange_status,
+                LAG(exchange_status) OVER (ORDER BY checked_at) AS prev_exchange_status
+            FROM
+                containers
+            WHERE
+                container_name = '` + container_name + `'
+                AND checked_at >= NOW() - INTERVAL 10 DAY
+        ) AS subquery
+        GROUP BY DATE(checked_at)
+        ORDER BY day DESC;`;
+
+
     try {
+
+        const gold_down_status = await db.query(query_for_gold_down);
+        console.log('Last Gold Down Status data retrieved from database:', gold_down_status);
+
+        const exchange_down_status = await db.query(query_for_exchange_down);
+        console.log('Last Exchange Down Status data retrieved from database:', exchange_down_status);
+
         const status_data = await db.query(query);
         console.log('API Status data retrieved from database:', status_data);
 
-        const down_status = await db.query(query_for_down);
-        console.log('Down Status data retrieved from database:', down_status);
-
-        status_through_time = status_data.map(item => ({
-            day: new Date(new Date(item.day).getTime() + 7 * 60 * 60 * 1000).toISOString().split('T')[0],
-            down_count: item.down_count
-        }));
-
-        results = {
-            status_data: status_through_time.reverse(),
-            checked_at: down_status.length > 0 ? new Date(new Date(down_status[0].checked_at).getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ') : ''
+        const results = {
+            status_data: status_data.map(item => ({
+                day: new Date(new Date(item.day).getTime() + 7 * 60 * 60 * 1000).toISOString().split('T')[0],
+                gold_down_count: item.gold_down_count || 0,
+                exchange_down_count: item.exchange_down_count || 0
+            })),
+            gold_down_at: gold_down_status.length > 0 ? new Date(new Date(gold_down_status[0].checked_at).getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ') : '',
+            exchange_down_at: exchange_down_status.length > 0 ? new Date(new Date(exchange_down_status[0].checked_at).getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ') : ''
         };
 
         return results;
@@ -479,7 +491,8 @@ async function storeData(data, service_id) {
             service_id,
             container_name,
             status,
-            endpoint_status,
+            gold_status,
+            exchange_status,
             cpu_percentage,
             memory_percentage,
             memory_usage,
@@ -489,14 +502,15 @@ async function storeData(data, service_id) {
             checked_at,
             created_at
         )
-        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
+        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
 
     data.map(async (each) => {
         const params = [
             service_id,
             each.container_name,
             each.info.container.status,
-            each.info.endpoint.status,
+            each.info.endpoint?.gold_status ?? 0,
+            each.info.endpoint?.exchange_status ?? 0,
             each.info.live_stats.CPUPerc,
             each.info.live_stats.MemPerc,
             each.info.live_stats.MemUsage,

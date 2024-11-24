@@ -122,7 +122,8 @@ const ContainerInfo = ({ containerName, info, haveAPI }: { containerName?: strin
     return (
       <Box>
         <Typography color={theme.palette.secondary.main} variant="h6">API Details</Typography>
-        <Typography color={theme.palette.secondary.main}>Last down time: {data.checked_at}</Typography>
+        <Typography color={theme.palette.secondary.main}>Last Gold API down time: {data.gold_down_at}</Typography>
+        <Typography color={theme.palette.secondary.main}>Last Exchange API down time: {data.exchange_down_at}</Typography>
         <Box sx={{ width: '100%', height: 400, mt: 2 }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data.status_data}>
@@ -131,7 +132,8 @@ const ContainerInfo = ({ containerName, info, haveAPI }: { containerName?: strin
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="down_count" stroke="#82ca9d" />
+              <Line type="monotone" dataKey="gold_down_count" stroke="#82ca9d" />
+              <Line type="monotone" dataKey="exchange_down_count" stroke="#8884d8" />
             </LineChart>
           </ResponsiveContainer>
         </Box>
@@ -232,8 +234,8 @@ const ContainerInfo = ({ containerName, info, haveAPI }: { containerName?: strin
         <Typography color={theme.palette.secondary.main}>Used: {info.ram.used}</Typography>
         <Typography color={theme.palette.secondary.main}>Max: {info.ram.max}</Typography>
         <Typography color={theme.palette.secondary.main}>Free: {info.ram.max - info.ram.used}</Typography>
-        <Typography color={theme.palette.secondary.main}>Highest RAM Usage In The Last 5 Days: {data.max_memory.memory_usage  + data.max_memory.unit} at {data.max_memory.checked_at}</Typography>
-        <Typography color={theme.palette.secondary.main}>Average RAM Usage Today: {data.avg_memory.memory_usage +  data.avg_memory.unit}</Typography>
+        <Typography color={theme.palette.secondary.main}>Highest RAM Usage In The Last 5 Days: {data.max_memory.memory_usage + data.max_memory.unit} at {data.max_memory.checked_at}</Typography>
+        <Typography color={theme.palette.secondary.main}>Average RAM Usage Today: {data.avg_memory.memory_usage + data.avg_memory.unit}</Typography>
         <Box sx={{ width: '100%', height: 400, mt: 2 }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data.memory_data}>

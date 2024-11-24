@@ -246,7 +246,7 @@ const ContainerInfo = ({containerName, info, haveAPI}: {containerName?: string, 
         <Typography color={theme.palette.secondary.main}>Max: {info.ram.max}</Typography>
         <Typography color={theme.palette.secondary.main}>Free: {info.ram.max - info.ram.used}</Typography>
         <Typography color={theme.palette.secondary.main}>Highest RAM Usage In The Last 5 Days: {data.max_memory.memory_usage  + data.max_memory.unit} at {data.max_memory.checked_at}</Typography>
-        <Typography color={theme.palette.secondary.main}>Average CPU Usage Today: {data.avg_memory.memory_usage +  data.avg_memory.unit}</Typography>
+        <Typography color={theme.palette.secondary.main}>Average RAM Usage Today: {data.avg_memory.memory_usage +  data.avg_memory.unit}</Typography>
         <Box sx={{ width: '100%', height: 400, mt: 2 }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data.memory_data}>

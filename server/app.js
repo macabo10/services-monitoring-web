@@ -13,7 +13,7 @@ var detailRouter = require('./routes/detail');
 
 const storeAfterFetching = require('./services/store').storeAfterFetching;
 
-// storeAfterFetching();
+storeAfterFetching();
 
 var app = express();
 

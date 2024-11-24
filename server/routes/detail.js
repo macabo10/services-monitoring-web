@@ -50,4 +50,13 @@ router.get('/api_status/:container_name', async function (req, res, next) {
     }
 });
 
+router.get('/user_capacity/:container_name', async function (req, res, next) {
+    try {
+        res.json(await actions.getUserCapacity(req.params.container_name));
+    } catch (error) {
+        console.error('Error While Querying...');
+        next(error);
+    }
+});
+
 module.exports = router;

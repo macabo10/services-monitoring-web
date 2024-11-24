@@ -32,7 +32,7 @@ const UserCapacity = ({ userCapacity }: { userCapacity: UserCapacity }) => {
   const theme = useTheme();
   return (
     <Typography variant="body1" color={theme.palette.secondary.main}>
-      {/* User capacity: {userCapacity.in} in, {userCapacity.out} out */}
+      Requests: {userCapacity.in}, Responses: {userCapacity.out}
     </Typography>
   );
 }
@@ -68,7 +68,7 @@ const Network = ({ network }: { network: Network }) => {
   );
 }
 
-const ContainerInfo = ({containerName, info, haveAPI}: {containerName?: string, info: MonitoringInfo, haveAPI?: boolean}) => {
+const ContainerInfo = ({ containerName, info, haveAPI }: { containerName?: string, info: MonitoringInfo, haveAPI?: boolean }) => {
   const theme = useTheme();
 
   const fetchContainerDetail = async (containerID: ContainerID) => {
@@ -140,47 +140,34 @@ const ContainerInfo = ({containerName, info, haveAPI}: {containerName?: string, 
   };
 
   const fetchUserCapacityDetail = async (containerID: ContainerID) => {
-    // Dummy data
+    const DETAIL_USER_CAPACITY_URL = process.env.NEXT_PUBLIC_BACKEND_URL + '/detail/user_capacity/' + containerID.id;
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const response = await fetch(`/api/container/details`, {
-      method: 'POST',
+    const response = await fetch(DETAIL_USER_CAPACITY_URL, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ containerID: containerID.id }),
+      }
     });
 
     let data = await response.json();
     console.log(data);
 
-    // Dummy data
-    data = [
-      { name: 'Mon', inbound: 100, outbound: 80 },
-      { name: 'Tue', inbound: 120, outbound: 100 },
-      { name: 'Wed', inbound: 140, outbound: 110 },
-      { name: 'Thu', inbound: 130, outbound: 90 },
-      { name: 'Fri', inbound: 150, outbound: 120 },
-    ];
-
     return (
       <Box>
         <Typography color={theme.palette.secondary.main} variant="h6">User Capacity Details</Typography>
-        <Typography color={theme.palette.secondary.main}>Inbound: {info.userCapacity.in}</Typography>
-        <Typography color={theme.palette.secondary.main}>Outbound: {info.userCapacity.out}</Typography>
-        <Typography color={theme.palette.secondary.main}>Peak inbound: 150</Typography>
-        <Typography color={theme.palette.secondary.main}>Peak outbound: 120</Typography>
-        <Typography color={theme.palette.secondary.main}>Average daily users: 85</Typography>
+        <Typography color={theme.palette.secondary.main}>Peak requests: {data.max_request.incoming_requests} at {data.max_request.checked_at}</Typography>
+        <Typography color={theme.palette.secondary.main}>Peak responses: {data.max_response.outgoing_responses} at {data.max_response.checked_at}</Typography>
         <Box sx={{ width: '100%', height: 400, mt: 2 }}>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
+            <LineChart data={data.user_capacity}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
+              <XAxis dataKey="checked_at" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="inbound" stroke="#8884d8" />
-              <Line type="monotone" dataKey="outbound" stroke="#82ca9d" />
+              <Line type="monotone" dataKey="incoming_requests" stroke="#8884d8" />
+              <Line type="monotone" dataKey="outgoing_responses" stroke="#82ca9d" />
             </LineChart>
           </ResponsiveContainer>
         </Box>
@@ -245,8 +232,8 @@ const ContainerInfo = ({containerName, info, haveAPI}: {containerName?: string, 
         <Typography color={theme.palette.secondary.main}>Used: {info.ram.used}</Typography>
         <Typography color={theme.palette.secondary.main}>Max: {info.ram.max}</Typography>
         <Typography color={theme.palette.secondary.main}>Free: {info.ram.max - info.ram.used}</Typography>
-        <Typography color={theme.palette.secondary.main}>Highest RAM Usage In The Last 5 Days: {data.max_memory.memory_usage  + data.max_memory.unit} at {data.max_memory.checked_at}</Typography>
-        <Typography color={theme.palette.secondary.main}>Average CPU Usage Today: {data.avg_memory.memory_usage +  data.avg_memory.unit}</Typography>
+        <Typography color={theme.palette.secondary.main}>Highest RAM Usage In The Last 5 Days: {data.max_memory.memory_usage + data.max_memory.unit} at {data.max_memory.checked_at}</Typography>
+        <Typography color={theme.palette.secondary.main}>Average CPU Usage Today: {data.avg_memory.memory_usage + data.avg_memory.unit}</Typography>
         <Box sx={{ width: '100%', height: 400, mt: 2 }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data.memory_data}>
@@ -309,15 +296,15 @@ const ContainerInfo = ({containerName, info, haveAPI}: {containerName?: string, 
           {info && <ContainerStatus containerStatus={info.container} />}
         </CardService>
         {haveAPI && (
-          <CardService 
-            title="Endpoint API" 
+          <CardService
+            title="Endpoint API"
             onFetchDetail={() => fetchApiDetail(info.containerID)}
           >
-            {info && <APIStatus apiStatus={info.api}/>}
+            {info && <APIStatus apiStatus={info.api} />}
           </CardService>
         )}
-        <CardService 
-          title="User capacity" 
+        <CardService
+          title="User capacity"
           onFetchDetail={() => fetchUserCapacityDetail(info.containerID)}
         >
           {info && <UserCapacity userCapacity={info.userCapacity} />}

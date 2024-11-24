@@ -10,6 +10,7 @@ const monitoredContainers = [
     { name: 'gold_price_service_no2', port: '3009', status: 'unknown' },
     { name: 'exchange_rate_service_no1', port: '3004', status: 'unknown' },
     { name: 'exchange_rate_service_no2', port: '3005', status: 'unknown' },
+    { name: 'message_queue_service', port: '4000', status: 'unknown' },
 ];
 
 // config cái connection vs yahoo các thứ để gửi mail
@@ -23,7 +24,7 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-const recipient = 'daavenspicks@gmail.com'; 
+const recipient = 'phanviethung783@gmail.com'; 
 
 
 // Đây là hàm gửi mail, dòng 39 là lệnh gửi: nhận vào cái set up connection transporter kia và cái mailoptions chứa subject content
@@ -70,4 +71,6 @@ const checkContainerStatus = async () => {
 };
 
 // Periodically check the status
-setInterval(checkContainerStatus, checkInterval);
+// setInterval(checkContainerStatus, checkInterval);
+
+module.exports = { checkContainerStatus };

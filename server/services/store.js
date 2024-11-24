@@ -1,5 +1,6 @@
 const axios = require('axios');
 const actions = require('../services/actions');
+const mailing = require('../services/mailing');
 
 const sideCarInfo = [
     { url: process.env.SIDECAR_EXCHANGE_RATE_API, service_id: 1 },
@@ -13,6 +14,7 @@ const fetchDataFromSidecar = async (sidecar) => {
         const response = await axios.get(sidecar.url);
         await actions.storeData(response.data, sidecar.service_id);
         console.log(`Data fetched from sidecar ${sidecar.service_id}:`, response.data);
+        mailing.checkContainerStatus();
     } catch (error) {
         console.error(`Error fetching data from sidecar ${sidecar.service_id}:`, error);
     }

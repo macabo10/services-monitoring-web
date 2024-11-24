@@ -20,11 +20,17 @@ const ContainerStatus = ({ containerStatus }: { containerStatus: ContainerStatus
 
 const APIStatus = ({ apiStatus }: { apiStatus: APIStatus }) => {
   const theme = useTheme();
-  const status = apiStatus.status ? 'up' : 'down';
+  const gold_status = apiStatus.gold_status ? 'up' : 'down';
+  const exchange_status = apiStatus.exchange_status ? 'up' : 'down';
   return (
-    <Typography variant="body1" color={status === 'up' ? 'green' : 'red'}>
-      API is {status}
+    <>
+    <Typography variant="body1" color={exchange_status === 'up' ? 'green' : 'red'}>
+      Exchange rate API is {exchange_status}
     </Typography>
+    <Typography variant="body1" color={gold_status === 'up' ? 'green' : 'red'}>
+      Gold price API is {gold_status}
+    </Typography>
+    </>
   );
 };
 

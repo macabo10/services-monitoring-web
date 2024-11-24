@@ -52,7 +52,10 @@ async function getGeneralInfo(service_id) {
         data.push({
             containerID: { id: exchange_data[0].container_name },
             container: { status: exchange_data[0].status === "up" },
-            api: { status: exchange_data[0].endpoint_status === "up" },
+            api: { 
+                exchange_status: exchange_data[0].exchange_status === "up",
+                gold_status: exchange_data[0].gold_status === "up" 
+            },
             cpu: { usage: parseFloat(exchange_data[0].cpu_percentage) },
             ram: {
                 usage: parseFloat(exchange_data[0].memory_percentage),

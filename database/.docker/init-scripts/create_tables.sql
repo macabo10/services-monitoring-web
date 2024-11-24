@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS containers (
     memory_percentage VARCHAR(50),
     memory_usage VARCHAR(50),
     network_io VARCHAR(50),
+    request_count INT,
+    response_count INT,
     checked_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (service_id) REFERENCES services(id)

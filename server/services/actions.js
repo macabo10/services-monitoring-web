@@ -64,7 +64,11 @@ async function getGeneralInfo(service_id) {
                 in: networkIO[0],
                 out: networkIO[1],
                 unit: networkUnit
-            }
+            },
+            userCapacity: {
+                in: exchange_data[0].request_count,
+                out: exchange_data[0].response_count
+            },
         });
         // data.push({ service_name: service.container_name, data: exchange_data });
     }
@@ -403,6 +407,72 @@ async function getAPIStatus(container_name) {
     }
 }
 
+async function getUserCapacity(container_name) {
+    const query = `SELECT 
+            request_count,
+            response_count,
+            checked_at
+            FROM containers
+            WHERE container_name = '` + container_name + `'
+            ORDER BY checked_at DESC
+            LIMIT 5;`;
+
+    const query_2 = `SELECT 
+                        request_count,
+                        checked_at
+                    FROM 
+                        containers
+                    WHERE 
+                        container_name = '` + container_name + `'
+                        AND DATE(checked_at) = CURDATE()
+                    ORDER BY 
+                        request_count DESC
+                    LIMIT 1;
+                        `;
+    const query_3 = `SELECT
+                        response_count,
+                        checked_at
+                    FROM 
+                        containers
+                    WHERE 
+                        container_name = '` + container_name + `'
+                        AND DATE(checked_at) = CURDATE()
+                    ORDER BY 
+                        response_count DESC
+                    LIMIT 1;
+                        `;
+
+    try {
+        const user_capacity = await db.query(query);
+        console.log('User Capacity data retrieved from database:', user_capacity);
+
+        const max_request = await db.query(query_2);
+        console.log('Max Request data in the last 5 days retrieved from database:', max_request);
+
+        const max_response = await db.query(query_3);
+        console.log('Max Response data in the last 5 days retrieved from database:', max_response);
+
+        const results = user_capacity.map(item => ({
+            incoming_requests: item.request_count,
+            outgoing_responses: item.response_count,
+            checked_at: new Date(new Date(item.checked_at).getTime() + 7 * 60 * 60 * 1000).toISOString().slice(11, 19)
+        }));
+
+        return {
+            user_capacity: results.reverse(),
+            max_request: max_request.length > 0 ? {
+                incoming_requests: max_request[0].request_count,
+                checked_at: new Date(new Date(max_request[0].checked_at).getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ')
+            } : {},
+            max_response: max_response.length > 0 ? {
+                outgoing_responses: max_response[0].response_count,
+                checked_at: new Date(new Date(max_response[0].checked_at).getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ')
+            } : {},
+        };
+    } catch (err) {
+        console.error('Error retrieving User Capacity data from database:', err);
+    }
+}
 async function storeData(data, service_id) {
     const query = `
         INSERT INTO containers(
@@ -414,10 +484,12 @@ async function storeData(data, service_id) {
             memory_percentage,
             memory_usage,
             network_io,
+            request_count,
+            response_count,
             checked_at,
             created_at
         )
-        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
 
     data.map(async (each) => {
         const params = [
@@ -429,6 +501,8 @@ async function storeData(data, service_id) {
             each.info.live_stats.MemPerc,
             each.info.live_stats.MemUsage,
             each.info.live_stats.NetIO,
+            each.info.user_capacity?.incoming_requests ?? 0,
+            each.info.user_capacity?.outgoing_responses ?? 0,
             each.checked_at,
             each.created_at,
         ];
@@ -449,5 +523,6 @@ module.exports = {
     getDetailNetwork,
     getContainerStatus,
     getAPIStatus,
+    getUserCapacity,
     storeData
 }

@@ -24,12 +24,12 @@ const APIStatus = ({ apiStatus }: { apiStatus: APIStatus }) => {
   const exchange_status = apiStatus.exchange_status ? 'up' : 'down';
   return (
     <>
-    <Typography variant="body1" color={exchange_status === 'up' ? 'green' : 'red'}>
-      Exchange rate API is {exchange_status}
-    </Typography>
-    <Typography variant="body1" color={gold_status === 'up' ? 'green' : 'red'}>
-      Gold price API is {gold_status}
-    </Typography>
+      <Typography variant="body1" color={exchange_status === 'up' ? 'green' : 'red'}>
+        Exchange rate API is {exchange_status}
+      </Typography>
+      <Typography variant="body1" color={gold_status === 'up' ? 'green' : 'red'}>
+        Gold price API is {gold_status}
+      </Typography>
     </>
   );
 };
@@ -95,7 +95,7 @@ const ContainerInfo = ({ containerName, info, haveAPI }: { containerName?: strin
       <Box>
         <Typography variant="h6" color={theme.palette.secondary.main}>Container Details</Typography>
         <Typography color={theme.palette.secondary.main}>Created: {data.created_at}</Typography>
-        <Typography color={theme.palette.secondary.main}>Last down time: {data.checked_at}</Typography>
+        {data.checked_at !== '' && <Typography color={theme.palette.secondary.main}>Last down time: {data.checked_at}</Typography>}
         <Box sx={{ width: '100%', height: 400, mt: 2 }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data.status_data}>
@@ -200,9 +200,9 @@ const ContainerInfo = ({ containerName, info, haveAPI }: { containerName?: strin
     return (
       <Box>
         <Typography color={theme.palette.secondary.main} variant="h6">CPU Details</Typography>
-        <Typography color={theme.palette.secondary.main}>Usage: {info.cpu.usage}%</Typography>
+        <Typography color={theme.palette.secondary.main}>Usage Now: {info.cpu.usage}%</Typography>
         <Typography color={theme.palette.secondary.main}>Highest CPU Usage In The Last 5 Days: {data.max_cpu.cpu_percentage + '%'} at {data.max_cpu.checked_at}</Typography>
-        <Typography color={theme.palette.secondary.main}>Average CPU Usage Today: {data.avg_cpu + '%'}</Typography>
+        <Typography color={theme.palette.secondary.main}>Average CPU Usage In The Last 24 hours: {data.avg_cpu + '%'}</Typography>
 
         <Box sx={{ width: '100%', height: 400, mt: 2 }}>
           <ResponsiveContainer width="100%" height="100%">
@@ -240,8 +240,9 @@ const ContainerInfo = ({ containerName, info, haveAPI }: { containerName?: strin
         <Typography color={theme.palette.secondary.main}>Used: {info.ram.used}</Typography>
         <Typography color={theme.palette.secondary.main}>Max: {info.ram.max}</Typography>
         <Typography color={theme.palette.secondary.main}>Free: {info.ram.max - info.ram.used}</Typography>
+        <Typography color={theme.palette.secondary.main}>Unit: {info.ram.unit}</Typography>
         <Typography color={theme.palette.secondary.main}>Highest RAM Usage In The Last 5 Days: {data.max_memory.memory_usage + data.max_memory.unit} at {data.max_memory.checked_at}</Typography>
-        <Typography color={theme.palette.secondary.main}>Average RAM Usage Today: {data.avg_memory.memory_usage + data.avg_memory.unit}</Typography>
+        <Typography color={theme.palette.secondary.main}>Average RAM Usage In The Last 24 Hours: {data.avg_memory.memory_usage + data.avg_memory.unit}</Typography>
         <Box sx={{ width: '100%', height: 400, mt: 2 }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data.memory_data}>
@@ -274,8 +275,8 @@ const ContainerInfo = ({ containerName, info, haveAPI }: { containerName?: strin
     return (
       <Box>
         <Typography color={theme.palette.secondary.main} variant="h6">Network Details</Typography>
-        <Typography color={theme.palette.secondary.main}>Total received in the last day: {data.daily_io.total_received + data.daily_io.unit}</Typography>
-        <Typography color={theme.palette.secondary.main}>Total sent in the last day: {data.daily_io.total_sent + data.daily_io.unit}</Typography>
+        <Typography color={theme.palette.secondary.main}>Total Received In The Last 24 Hours: {data.daily_io.total_received + data.daily_io.unit}</Typography>
+        <Typography color={theme.palette.secondary.main}>Total Sent In The Last 24 Hours: {data.daily_io.total_sent + data.daily_io.unit}</Typography>
         <Box sx={{ width: '100%', height: 400, mt: 2 }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data.network_data}>

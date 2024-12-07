@@ -10,6 +10,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var generalRouter = require('./routes/general');
 var detailRouter = require('./routes/detail');
+var registerRouter = require('./routes/register');
 
 const storeAfterFetching = require('./services/store').storeAfterFetching;
 
@@ -31,6 +32,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/general', generalRouter);
 app.use('/detail', detailRouter);
+app.use('/register', registerRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -12,6 +12,7 @@ async function getDistinctContainerNames(service_id) {
     return containerNames;
 }
 
+// Get general information of a service
 async function getGeneralInfo(service_id) {
     let containerNames = await getDistinctContainerNames(service_id);
     console.log('Number of containers:', containerNames.length);
@@ -52,9 +53,9 @@ async function getGeneralInfo(service_id) {
         data.push({
             containerID: { id: exchange_data[0].container_name },
             container: { status: exchange_data[0].status === "up" },
-            api: { 
+            api: {
                 exchange_status: exchange_data[0].exchange_status === "up",
-                gold_status: exchange_data[0].gold_status === "up" 
+                gold_status: exchange_data[0].gold_status === "up"
             },
             cpu: { usage: parseFloat(exchange_data[0].cpu_percentage) },
             ram: {
@@ -110,7 +111,7 @@ async function getDetailCPU(container_name) {
 
     try {
         const cpu_data = await db.query(query);
-        console.log('CPU data retrieved from database:', cpu_data);
+        console.log('CPU data retrieved in the last 10 times from database:', cpu_data);
 
         const max_cpu = await db.query(query_2);
         console.log('Max CPU data in the last 5 days retrieved from database:', max_cpu);
@@ -126,9 +127,14 @@ async function getDetailCPU(container_name) {
         const max_cpu_data = max_cpu.length > 0 && max_cpu[0].cpu_percentage ? {
             cpu_percentage: parseFloat(max_cpu[0].cpu_percentage.replace('%', '')),
             checked_at: new Date(new Date(max_cpu[0].checked_at).getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' ')
-        } : 0;
+        } :
+            {
+                cpu_percentage: 0,
+                checked_at: new Date(new Date().getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' '),
+            };
 
-        const avg_cpu_data = avg_cpu.length > 0 && avg_cpu[0].avg_cpu_percentage ? parseFloat(avg_cpu[0].avg_cpu_percentage) : 0;
+
+        const avg_cpu_data = avg_cpu.length > 0 && avg_cpu[0].avg_cpu_percentage ? parseFloat(avg_cpu[0].avg_cpu_percentage).toFixed(5) : 0;
 
         return {
             cpu_data: results.reverse(),
@@ -148,7 +154,6 @@ async function getDetailMemory(container_name) {
 
     const query_1 = `SELECT 
                         checked_at, 
-                        memory_usage,
                         CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(memory_usage, 'MiB', 1), ' ', -1) AS DECIMAL(10,2)) AS used_memory_mb
                     FROM 
                         containers
@@ -200,21 +205,28 @@ async function getDetailMemory(container_name) {
 
         const max_memory_data = max_mem.length > 0
             ? {
-                memory_usage: parseFloat(max_mem[0].used_memory_mb) / 1024,
+                memory_usage: (parseFloat(max_mem[0].used_memory_mb) / 1024).toFixed(2),
                 checked_at: new Date(new Date(max_mem[0].checked_at).getTime() + 7 * 60 * 60 * 1000)
                     .toISOString()
                     .replace('T', ' ')
                     .slice(0, 19),
                 unit: 'GiB',
             }
-            : 0;
+            : {
+                memory_usage: 0,
+                checked_at: new Date(new Date().getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 19).replace('T', ' '),
+                unit: 'GiB',
+            };
 
         const avg_memory_data = avg_mem.length > 0 && avg_mem[0].avg_memory_usage
             ? {
-                memory_usage: parseFloat(avg_mem[0].avg_memory_usage) / 1024,
+                memory_usage: (parseFloat(avg_mem[0].avg_memory_usage) / 1024).toFixed(2),
                 unit: 'GiB',
             }
-            : null;
+            : {
+                memory_usage: 0,
+                unit: 'GiB',
+            };
 
         return {
             memory_data: results.reverse(),
@@ -334,10 +346,10 @@ async function getContainerStatus(container_name) {
 
     try {
         const status_data = await db.query(query_1);
-        console.log('Container Status data retrieved from database:', status_data);
+        console.log('Container Status data in the last 10 days retrieved from database:', status_data);
 
         const down_status = await db.query(query_for_down);
-        console.log('Down Status data retrieved from database:', down_status);
+        console.log('Last Down Status data retrieved from database:', down_status);
 
         const created_at = await db.query(query_for_created_at);
         console.log('Created At data retrieved from database:', created_at);
